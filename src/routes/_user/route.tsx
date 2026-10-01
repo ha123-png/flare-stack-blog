@@ -4,11 +4,13 @@ import theme from "@theme";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { ErrorPage } from "@/components/common/error-page";
+import type { ThemeComponents } from "@/features/theme/contract/components";
 import { AUTH_KEYS, sessionQuery } from "@/features/auth/queries";
 import { authClient } from "@/lib/auth/auth.client";
 import { getLogoutAuthErrorMessage } from "@/lib/auth/auth-errors";
 import { CACHE_CONTROL } from "@/lib/constants";
 import { m } from "@/paraglide/messages";
+const ThemeError = (theme as ThemeComponents).ErrorPage ?? ErrorPage;
 
 export const Route = createFileRoute("/_user")({
   loader: async ({ context }) => {
@@ -16,7 +18,7 @@ export const Route = createFileRoute("/_user")({
     return { session };
   },
   component: UserLayout,
-  errorComponent: ({ error }) => <ErrorPage error={error} />,
+  errorComponent: ({ error }) => <ThemeError error={error} />,
   headers: () => {
     return CACHE_CONTROL.private;
   },

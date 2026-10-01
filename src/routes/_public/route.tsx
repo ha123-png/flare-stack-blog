@@ -63,6 +63,8 @@ function PublicLayout() {
   // Global shortcut: Cmd/Ctrl + K to navigate to search
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // A theme may provide an accessible quick-search surface first.
+      if (e.defaultPrevented) return;
       const isToggle = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k";
       if (isToggle) {
         e.preventDefault();

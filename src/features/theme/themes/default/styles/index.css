@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" source("../../../../../");
 @import "@/styles/shared.css";
 
 @import "@fontsource-variable/noto-sans-sc";

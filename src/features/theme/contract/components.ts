@@ -27,6 +27,15 @@ import type {
  * TypeScript 在编译时验证主题实现了所有必须的组件。
  */
 export interface ThemeComponents {
+  /** 可选独立索引；旧主题无需实现，也不改变原有布局。 */
+  ArchivePage?: React.ComponentType;
+  DirectoryPage?: React.ComponentType;
+  TagsPage?: React.ComponentType;
+  ProjectsPage?: React.ComponentType;
+  ProjectPage?: React.ComponentType<{ projectId: string }>;
+  AboutPage?: React.ComponentType;
+  NotFoundPage?: React.ComponentType;
+  ErrorPage?: React.ComponentType<{ error?: Error }>;
   /** 主题静态配置（数据获取参数等） */
   config: ThemeConfig;
   /** 注入到 document 根节点的主题变量 */

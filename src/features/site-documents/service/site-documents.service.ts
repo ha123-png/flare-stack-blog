@@ -120,6 +120,7 @@ export async function buildSitemapXml(env: Env) {
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  ${__THEME_NAME__ === "szweb" ? ["archive", "tags", "projects", "directory", "about"].map((path) => `<url><loc>https://${env.DOMAIN}/${path}</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>`).join("\n") : ""}
   ${posts
     .map((post) => {
       const lastModifiedAt = formatDate(post.updatedAt, [

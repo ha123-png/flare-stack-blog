@@ -34,9 +34,7 @@ function RouteComponent() {
     turnstileProps,
   } = useTurnstile("login");
 
-  const currentSearchParams = new URLSearchParams(
-    new URL(location.href, window.location.origin).search,
-  );
+  const currentSearchParams = new URLSearchParams(location.searchStr);
   const isOAuthAuthorizationRequest =
     !!currentSearchParams.get("client_id") &&
     !!currentSearchParams.get("response_type");

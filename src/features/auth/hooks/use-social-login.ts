@@ -15,11 +15,11 @@ export function useSocialLogin(options: UseSocialLoginOptions) {
 
   const [isLoading, setIsLoading] = useState(false);
   const previousLocation = usePreviousLocation();
-  const callbackURL = normalizeRedirectUrl(redirectTo, previousLocation);
 
   const handleGithubLogin = async () => {
     if (isLoading) return;
 
+    const callbackURL = normalizeRedirectUrl(redirectTo, previousLocation);
     setIsLoading(true);
 
     const { error } = await authClient.signIn.social({

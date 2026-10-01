@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/* Scan UI source only; docs and local acceptance artifacts are not templates. */
+@import "tailwindcss" source("./");
 @import "./styles/shared.css";
 @import "tw-animate-css";
 

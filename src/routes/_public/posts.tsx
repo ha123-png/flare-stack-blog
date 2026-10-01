@@ -74,7 +74,7 @@ function RouteComponent() {
   const handleTagClick = (clickedTag: string) => {
     navigate({
       search: {
-        tagName: clickedTag === tagName ? undefined : clickedTag,
+        tagName: !clickedTag || clickedTag === tagName ? undefined : clickedTag,
       },
       replace: true, // Replace history to avoid back-button clutter
     });

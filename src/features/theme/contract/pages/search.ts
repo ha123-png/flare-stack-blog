@@ -18,6 +18,8 @@ export interface SearchPageProps {
   query: string;
   results: Array<SearchResultItem>;
   isSearching: boolean;
+  errorMessage?: string;
+  onRetry?: () => void;
   onQueryChange: (query: string) => void;
   onSelectPost: (slug: string) => void;
   onBack: () => void;

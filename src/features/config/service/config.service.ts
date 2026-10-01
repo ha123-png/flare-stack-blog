@@ -10,6 +10,7 @@ import * as ConfigRepo from "@/features/config/data/config.data";
 import { FullSiteConfigSchema } from "@/features/config/site-config.schema";
 import type { SocialLink } from "@/features/config/utils/social-platforms";
 import * as Storage from "@/features/media/data/media.storage";
+import { zheyePublicTitle } from "@/features/theme/themes/szweb/identity";
 import { purgeSiteCDNCache } from "@/lib/invalidate";
 
 const DEFAULT_SMTP_PORT = 465;
@@ -177,7 +178,11 @@ export async function getSiteConfig(
   context: DbContext & { executionCtx: ExecutionContext },
 ) {
   const config = await getSystemConfig(context);
-  return resolveSiteConfig(config);
+  const site = resolveSiteConfig(config);
+  // Public presentation only. No persisted config, author, or other theme changes.
+  return typeof __THEME_NAME__ !== "undefined" && __THEME_NAME__ === "szweb"
+    ? { ...site, title: zheyePublicTitle(site.title) }
+    : site;
 }
 
 export async function updateSystemConfig(

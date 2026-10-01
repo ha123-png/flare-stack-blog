@@ -1,10 +1,10 @@
 import { ExternalLink, Globe } from "lucide-react";
-import type { FriendLinkWithUser } from "@/features/friend-links/friend-links.schema";
+import type { PublicFriendLink } from "@/features/friend-links/friend-links.schema";
 import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 
 interface FriendCardProps {
-  link: Omit<FriendLinkWithUser, "createdAt" | "updatedAt">;
+  link: PublicFriendLink;
   className?: string;
   style?: React.CSSProperties;
 }

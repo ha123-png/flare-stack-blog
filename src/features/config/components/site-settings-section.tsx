@@ -11,6 +11,13 @@ import { m } from "@/paraglide/messages";
 
 function ThemeSettingsContent() {
   switch (__THEME_NAME__) {
+    case "szweb":
+      return (
+        <p className="text-sm text-muted-foreground">
+          szweb 的项目与编辑配图在主题的 site.ts
+          中配置。站点名称、作者和社交链接沿用此处设置。
+        </p>
+      );
     case "default":
       return <DefaultThemeSettings />;
     case "fuwari":

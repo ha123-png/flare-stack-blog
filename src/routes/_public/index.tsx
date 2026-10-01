@@ -7,6 +7,7 @@ import {
   popularPostsQuery,
   recentPostsQuery,
 } from "@/features/posts/queries";
+import { tagsQueryOptions } from "@/features/tags/queries";
 import { buildCanonicalUrl, canonicalLink } from "@/lib/seo";
 
 const { recentPostsLimit, popularPostsLimit } = theme.config.home;
@@ -18,6 +19,9 @@ export const Route = createFileRoute("/_public/")({
       context.queryClient.ensureQueryData(siteDomainQuery),
       context.queryClient.ensureQueryData(pinnedPostsQuery),
       context.queryClient.ensureQueryData(popularPostsQuery(popularPostsLimit)),
+      ...(__THEME_NAME__ === "szweb"
+        ? [context.queryClient.prefetchQuery(tagsQueryOptions)]
+        : []),
     ]);
 
     return {

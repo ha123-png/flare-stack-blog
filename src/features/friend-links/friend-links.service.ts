@@ -75,10 +75,12 @@ export async function getApprovedFriendLinks(
   context: DbContext & { executionCtx: ExecutionContext },
 ) {
   const fetcher = async () =>
-    await FriendLinkRepo.getAllFriendLinks(context.db, {
-      status: "approved",
-      limit: null,
-    });
+    ApprovedFriendLinksResponseSchema.parse(
+      await FriendLinkRepo.getAllFriendLinks(context.db, {
+        status: "approved",
+        limit: null,
+      }),
+    );
 
   const version = await CacheService.getVersion(context, "friend-links:list");
   const cacheKey = FRIEND_LINKS_CACHE_KEYS.approvedList(version);

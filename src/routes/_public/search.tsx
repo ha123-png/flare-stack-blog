@@ -8,7 +8,9 @@ import {
   searchMetaQuery,
 } from "@/features/search/queries";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useNavigateBack } from "@/hooks/use-navigate-back";
 import { m } from "@/paraglide/messages";
+import { getLocale } from "@/paraglide/runtime";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -36,6 +38,7 @@ export const Route = createFileRoute("/_public/search")({
 function SearchRoute() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  const handleBack = useNavigateBack({ fallbackTo: "/" });
 
   const [query, setQuery] = useState(search.q || "");
 
@@ -45,7 +48,7 @@ function SearchRoute() {
     }
   }, [search.q]);
 
-  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery = useDebounce(query.trim(), 300);
 
   useEffect(() => {
     if (debouncedQuery !== (search.q || "")) {
@@ -59,19 +62,30 @@ function SearchRoute() {
     }
   }, [debouncedQuery, navigate, search.q]);
 
-  const { data: meta } = useQuery({
+  const metaQuery = useQuery({
     ...searchMetaQuery,
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: results, isLoading: isSearching } = useQuery({
-    ...searchDocsQueryOptions(debouncedQuery, meta?.version || "init"),
-    enabled: debouncedQuery.length > 0 && !!meta?.version,
+  const resultQuery = useQuery({
+    ...searchDocsQueryOptions(
+      debouncedQuery,
+      metaQuery.data?.version || "init",
+    ),
+    enabled: debouncedQuery.length > 0 && !!metaQuery.data?.version,
     staleTime: Infinity,
     placeholderData: keepPreviousData,
   });
 
-  const searchResults = useMemo(() => results ?? [], [results]);
+  const searchResults = useMemo(
+    () => resultQuery.data ?? [],
+    [resultQuery.data],
+  );
+  const isSearching =
+    query.trim().length > 0 &&
+    (query.trim() !== debouncedQuery ||
+      metaQuery.isPending ||
+      resultQuery.isFetching);
 
   const handleQueryChange = (newQuery: string) => {
     setQuery(newQuery);
@@ -81,15 +95,22 @@ function SearchRoute() {
     navigate({ to: "/post/$slug", params: { slug } });
   };
 
-  const handleBack = () => {
-    navigate({ to: "/" });
-  };
-
   return (
     <theme.SearchPage
       query={query}
       results={searchResults}
       isSearching={isSearching}
+      errorMessage={
+        metaQuery.isError || resultQuery.isError
+          ? getLocale() === "en"
+            ? "Search is unavailable. Please try again."
+            : "搜索暂时无法连接，请重试。"
+          : undefined
+      }
+      onRetry={() => {
+        void metaQuery.refetch();
+        if (metaQuery.data?.version) void resultQuery.refetch();
+      }}
       onQueryChange={handleQueryChange}
       onSelectPost={handleSelectPost}
       onBack={handleBack}

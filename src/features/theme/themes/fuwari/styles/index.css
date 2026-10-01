@@ -1,5 +1,5 @@
 /* Theme: fuwari - Fuwari-style variables and utilities */
-@import "tailwindcss";
+@import "tailwindcss" source("../../../../../");
 @import "@/styles/shared.css";
 @import "./markdown.css";
 @plugin "@tailwindcss/typography";

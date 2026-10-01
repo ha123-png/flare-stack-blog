@@ -19,9 +19,13 @@ import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
 import { Route as UserSubmitFriendLinkRouteImport } from './routes/_user/submit-friend-link'
 import { Route as UserProfileRouteImport } from './routes/_user/profile'
 import { Route as PublicUnsubscribeRouteImport } from './routes/_public/unsubscribe'
+import { Route as PublicTagsRouteImport } from './routes/_public/tags'
 import { Route as PublicSearchRouteImport } from './routes/_public/search'
 import { Route as PublicPostsRouteImport } from './routes/_public/posts'
 import { Route as PublicFriendLinksRouteImport } from './routes/_public/friend-links'
+import { Route as PublicDirectoryRouteImport } from './routes/_public/directory'
+import { Route as PublicArchiveRouteImport } from './routes/_public/archive'
+import { Route as PublicAboutRouteImport } from './routes/_public/about'
 import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
 import { Route as AuthResetLinkRouteImport } from './routes/_auth/reset-link'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
@@ -34,6 +38,8 @@ import { Route as AdminPostsIndexRouteImport } from './routes/admin/posts/index'
 import { Route as AdminMediaIndexRouteImport } from './routes/admin/media/index'
 import { Route as AdminFriendLinksIndexRouteImport } from './routes/admin/friend-links/index'
 import { Route as AdminCommentsIndexRouteImport } from './routes/admin/comments/index'
+import { Route as PublicProjectsIndexRouteImport } from './routes/_public/projects.index'
+import { Route as PublicProjectsProjectIdRouteImport } from './routes/_public/projects.$projectId'
 import { Route as PublicPostSlugRouteImport } from './routes/_public/post/$slug'
 import { Route as AdminPostsEditIdRouteImport } from './routes/admin/posts/edit.$id'
 
@@ -84,6 +90,11 @@ const PublicUnsubscribeRoute = PublicUnsubscribeRouteImport.update({
   path: '/unsubscribe',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const PublicTagsRoute = PublicTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicSearchRoute = PublicSearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -97,6 +108,21 @@ const PublicPostsRoute = PublicPostsRouteImport.update({
 const PublicFriendLinksRoute = PublicFriendLinksRouteImport.update({
   id: '/friend-links',
   path: '/friend-links',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicDirectoryRoute = PublicDirectoryRouteImport.update({
+  id: '/directory',
+  path: '/directory',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicArchiveRoute = PublicArchiveRouteImport.update({
+  id: '/archive',
+  path: '/archive',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicAboutRoute = PublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
@@ -159,6 +185,16 @@ const AdminCommentsIndexRoute = AdminCommentsIndexRouteImport.update({
   path: '/comments/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const PublicProjectsIndexRoute = PublicProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicProjectsProjectIdRoute = PublicProjectsProjectIdRouteImport.update({
+  id: '/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicPostSlugRoute = PublicPostSlugRouteImport.update({
   id: '/post/$slug',
   path: '/post/$slug',
@@ -178,9 +214,13 @@ export interface FileRoutesByFullPath {
   '/register': typeof AuthRegisterRoute
   '/reset-link': typeof AuthResetLinkRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/about': typeof PublicAboutRoute
+  '/archive': typeof PublicArchiveRoute
+  '/directory': typeof PublicDirectoryRoute
   '/friend-links': typeof PublicFriendLinksRoute
   '/posts': typeof PublicPostsRoute
   '/search': typeof PublicSearchRoute
+  '/tags': typeof PublicTagsRoute
   '/unsubscribe': typeof PublicUnsubscribeRoute
   '/profile': typeof UserProfileRoute
   '/submit-friend-link': typeof UserSubmitFriendLinkRoute
@@ -188,6 +228,8 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/post/$slug': typeof PublicPostSlugRoute
+  '/projects/$projectId': typeof PublicProjectsProjectIdRoute
+  '/projects': typeof PublicProjectsIndexRoute
   '/admin/comments': typeof AdminCommentsIndexRoute
   '/admin/friend-links': typeof AdminFriendLinksIndexRoute
   '/admin/media': typeof AdminMediaIndexRoute
@@ -202,9 +244,13 @@ export interface FileRoutesByTo {
   '/register': typeof AuthRegisterRoute
   '/reset-link': typeof AuthResetLinkRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/about': typeof PublicAboutRoute
+  '/archive': typeof PublicArchiveRoute
+  '/directory': typeof PublicDirectoryRoute
   '/friend-links': typeof PublicFriendLinksRoute
   '/posts': typeof PublicPostsRoute
   '/search': typeof PublicSearchRoute
+  '/tags': typeof PublicTagsRoute
   '/unsubscribe': typeof PublicUnsubscribeRoute
   '/profile': typeof UserProfileRoute
   '/submit-friend-link': typeof UserSubmitFriendLinkRoute
@@ -212,6 +258,8 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/admin': typeof AdminIndexRoute
   '/post/$slug': typeof PublicPostSlugRoute
+  '/projects/$projectId': typeof PublicProjectsProjectIdRoute
+  '/projects': typeof PublicProjectsIndexRoute
   '/admin/comments': typeof AdminCommentsIndexRoute
   '/admin/friend-links': typeof AdminFriendLinksIndexRoute
   '/admin/media': typeof AdminMediaIndexRoute
@@ -232,9 +280,13 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-link': typeof AuthResetLinkRoute
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
+  '/_public/about': typeof PublicAboutRoute
+  '/_public/archive': typeof PublicArchiveRoute
+  '/_public/directory': typeof PublicDirectoryRoute
   '/_public/friend-links': typeof PublicFriendLinksRoute
   '/_public/posts': typeof PublicPostsRoute
   '/_public/search': typeof PublicSearchRoute
+  '/_public/tags': typeof PublicTagsRoute
   '/_public/unsubscribe': typeof PublicUnsubscribeRoute
   '/_user/profile': typeof UserProfileRoute
   '/_user/submit-friend-link': typeof UserSubmitFriendLinkRoute
@@ -242,6 +294,8 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/_public/post/$slug': typeof PublicPostSlugRoute
+  '/_public/projects/$projectId': typeof PublicProjectsProjectIdRoute
+  '/_public/projects/': typeof PublicProjectsIndexRoute
   '/admin/comments/': typeof AdminCommentsIndexRoute
   '/admin/friend-links/': typeof AdminFriendLinksIndexRoute
   '/admin/media/': typeof AdminMediaIndexRoute
@@ -260,9 +314,13 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-link'
     | '/verify-email'
+    | '/about'
+    | '/archive'
+    | '/directory'
     | '/friend-links'
     | '/posts'
     | '/search'
+    | '/tags'
     | '/unsubscribe'
     | '/profile'
     | '/submit-friend-link'
@@ -270,6 +328,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/'
     | '/post/$slug'
+    | '/projects/$projectId'
+    | '/projects'
     | '/admin/comments'
     | '/admin/friend-links'
     | '/admin/media'
@@ -284,9 +344,13 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-link'
     | '/verify-email'
+    | '/about'
+    | '/archive'
+    | '/directory'
     | '/friend-links'
     | '/posts'
     | '/search'
+    | '/tags'
     | '/unsubscribe'
     | '/profile'
     | '/submit-friend-link'
@@ -294,6 +358,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/post/$slug'
+    | '/projects/$projectId'
+    | '/projects'
     | '/admin/comments'
     | '/admin/friend-links'
     | '/admin/media'
@@ -313,9 +379,13 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_auth/reset-link'
     | '/_auth/verify-email'
+    | '/_public/about'
+    | '/_public/archive'
+    | '/_public/directory'
     | '/_public/friend-links'
     | '/_public/posts'
     | '/_public/search'
+    | '/_public/tags'
     | '/_public/unsubscribe'
     | '/_user/profile'
     | '/_user/submit-friend-link'
@@ -323,6 +393,8 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/admin/'
     | '/_public/post/$slug'
+    | '/_public/projects/$projectId'
+    | '/_public/projects/'
     | '/admin/comments/'
     | '/admin/friend-links/'
     | '/admin/media/'
@@ -412,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicUnsubscribeRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_public/tags': {
+      id: '/_public/tags'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof PublicTagsRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/_public/search': {
       id: '/_public/search'
       path: '/search'
@@ -431,6 +510,27 @@ declare module '@tanstack/react-router' {
       path: '/friend-links'
       fullPath: '/friend-links'
       preLoaderRoute: typeof PublicFriendLinksRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/directory': {
+      id: '/_public/directory'
+      path: '/directory'
+      fullPath: '/directory'
+      preLoaderRoute: typeof PublicDirectoryRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/archive': {
+      id: '/_public/archive'
+      path: '/archive'
+      fullPath: '/archive'
+      preLoaderRoute: typeof PublicArchiveRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof PublicAboutRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_auth/verify-email': {
@@ -517,6 +617,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCommentsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_public/projects/': {
+      id: '/_public/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof PublicProjectsIndexRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/projects/$projectId': {
+      id: '/_public/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof PublicProjectsProjectIdRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/_public/post/$slug': {
       id: '/_public/post/$slug'
       path: '/post/$slug'
@@ -555,21 +669,33 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface PublicRouteRouteChildren {
+  PublicAboutRoute: typeof PublicAboutRoute
+  PublicArchiveRoute: typeof PublicArchiveRoute
+  PublicDirectoryRoute: typeof PublicDirectoryRoute
   PublicFriendLinksRoute: typeof PublicFriendLinksRoute
   PublicPostsRoute: typeof PublicPostsRoute
   PublicSearchRoute: typeof PublicSearchRoute
+  PublicTagsRoute: typeof PublicTagsRoute
   PublicUnsubscribeRoute: typeof PublicUnsubscribeRoute
   PublicIndexRoute: typeof PublicIndexRoute
   PublicPostSlugRoute: typeof PublicPostSlugRoute
+  PublicProjectsProjectIdRoute: typeof PublicProjectsProjectIdRoute
+  PublicProjectsIndexRoute: typeof PublicProjectsIndexRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicAboutRoute: PublicAboutRoute,
+  PublicArchiveRoute: PublicArchiveRoute,
+  PublicDirectoryRoute: PublicDirectoryRoute,
   PublicFriendLinksRoute: PublicFriendLinksRoute,
   PublicPostsRoute: PublicPostsRoute,
   PublicSearchRoute: PublicSearchRoute,
+  PublicTagsRoute: PublicTagsRoute,
   PublicUnsubscribeRoute: PublicUnsubscribeRoute,
   PublicIndexRoute: PublicIndexRoute,
   PublicPostSlugRoute: PublicPostSlugRoute,
+  PublicProjectsProjectIdRoute: PublicProjectsProjectIdRoute,
+  PublicProjectsIndexRoute: PublicProjectsIndexRoute,
 }
 
 const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(

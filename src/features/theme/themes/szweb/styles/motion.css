@@ -1,0 +1,398 @@
+/* Interaction is a short response, never a running background effect. */
+.sz-desktop-nav {
+  position: relative;
+}
+.sz-desktop-nav a {
+  transition: color var(--sz-fast) ease;
+}
+.sz-desktop-nav a:hover {
+  color: var(--sz-fg);
+}
+.sz-desktop-nav a::before {
+  content: "";
+  position: absolute;
+  bottom: 40px;
+  right: -8px;
+  width: 3px;
+  height: 14px;
+  background: var(--sz-line);
+  clip-path: polygon(0 0, 100% 3px, 100% calc(100% - 3px), 0 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms var(--sz-ease);
+}
+.sz-desktop-nav a:hover::before {
+  transform: scaleX(1);
+}
+.sz-desktop-nav a[aria-current="page"]::before {
+  display: none;
+}
+.sz-desktop-nav a[aria-current="page"]::after {
+  display: none;
+}
+.sz-nav-indicator {
+  position: absolute;
+  left: 0;
+  bottom: -12px;
+  width: 9px;
+  height: 19px;
+  background: var(--sz-fg);
+  pointer-events: none;
+  opacity: var(--sz-nav-visible, 0);
+  transform-origin: left;
+  transform: translateX(var(--sz-nav-x, 0px));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  transition:
+    transform 320ms var(--sz-ease),
+    opacity 180ms ease;
+}
+.sz-icon-button {
+  transition:
+    background-color var(--sz-fast) ease,
+    color var(--sz-fast) ease;
+}
+.sz-icon-button:hover {
+  background: var(--sz-soft);
+}
+.sz-text-link svg,
+.sz-project-action svg {
+  transition: transform 240ms var(--sz-ease);
+}
+.sz-text-link:hover svg,
+.sz-text-link:focus-visible svg {
+  transform: translateX(3px);
+}
+.sz-footer-bottom .sz-text-link:hover svg {
+  transform: translateY(-3px);
+}
+.sz-button {
+  transition:
+    opacity var(--sz-fast) ease,
+    background-color var(--sz-fast) ease;
+}
+.sz-home-row,
+.sz-article-row,
+.sz-tag-index-entry {
+  transition: background-color 200ms ease;
+}
+.sz-home-row:hover,
+.sz-article-row:focus-within {
+  background-color: var(--sz-soft);
+}
+.sz-home-row h3 a,
+.sz-article-title a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+.sz-preview-rail,
+.sz-inline-preview {
+  animation: sz-small-arrival 240ms var(--sz-ease);
+}
+.sz-view-toggle button {
+  position: relative;
+}
+.sz-view-toggle button::after {
+  content: "";
+  position: absolute;
+  inset: auto 12px 4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transition: transform 220ms var(--sz-ease);
+}
+.sz-view-toggle button.is-selected::after {
+  transform: scaleX(1);
+}
+.sz-appearance[open] .sz-popover,
+.sz-account[open] .sz-popover {
+  animation: sz-small-arrival 180ms var(--sz-ease);
+}
+.sz-mobile-menu[open] {
+  animation: sz-menu-arrival 160ms ease-out;
+}
+.sz-mobile-menu[open] > nav > a {
+  animation: sz-small-arrival 280ms var(--sz-ease) both;
+}
+.sz-mobile-menu[open] > nav > a:nth-child(2) {
+  animation-delay: 20ms;
+}
+.sz-mobile-menu[open] > nav > a:nth-child(3) {
+  animation-delay: 40ms;
+}
+.sz-mobile-menu[open] > nav > a:nth-child(4) {
+  animation-delay: 60ms;
+}
+.sz-mobile-menu[open] > nav > a:nth-child(5) {
+  animation-delay: 80ms;
+}
+.sz-mobile-menu[open] > nav > a:nth-child(6) {
+  animation-delay: 100ms;
+}
+.sz-mobile-menu > nav > a[aria-current="page"] > span {
+  color: #eee;
+}
+.sz-mobile-menu > nav > a > span {
+  transition: transform 220ms var(--sz-ease);
+}
+.sz-mobile-menu > nav > a:hover > span {
+  transform: translateX(-4px);
+}
+
+/* A persistent canvas lets the eye follow content instead of a changing box. */
+.sz-project-band {
+  --sz-chroma: var(--sz-ink);
+}
+.sz-project-visual {
+  min-width: 0;
+}
+.sz-stage-images {
+  position: relative;
+  aspect-ratio: 1.5;
+  overflow: hidden;
+  background: #141414;
+}
+.sz-project-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  clip-path: inset(0 2% 0 0);
+  transition:
+    opacity 260ms ease,
+    clip-path 320ms var(--sz-ease),
+    visibility 0s 320ms;
+  pointer-events: none;
+}
+.sz-project-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  clip-path: inset(0);
+  z-index: 1;
+  transition-delay: 0s;
+}
+.sz-stage-images .sz-art {
+  height: 100%;
+  aspect-ratio: auto;
+}
+.sz-project-tabs button {
+  position: relative;
+  transition: color 160ms ease;
+}
+.sz-project-tabs button::before {
+  content: "";
+  position: absolute;
+  inset: 28px auto auto -14px;
+  width: 5px;
+  height: 18px;
+  clip-path: polygon(0 0, 100% 3px, 100% calc(100% - 3px), 0 100%);
+  background: #eee;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition:
+    transform 320ms var(--sz-ease),
+    background-color 260ms ease;
+}
+.sz-project-tabs button.active::before {
+  transform: scaleX(1);
+}
+.sz-project-tabs button:hover {
+  color: #ccc;
+}
+.sz-project-tabs button.active {
+  color: #f2f2f0;
+}
+.sz-project-tabs button > .sz-project-fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-top: 0;
+  font-size: var(--sz-ui);
+  letter-spacing: 0;
+  transition:
+    grid-template-rows 300ms var(--sz-ease),
+    margin-top 300ms var(--sz-ease),
+    opacity 180ms ease;
+}
+.sz-project-abstract {
+  display: block;
+  overflow: hidden;
+  min-height: 0;
+  max-width: 29ch;
+  color: #aaa;
+  font-size: var(--sz-ui);
+  line-height: 1.85;
+}
+.sz-project-tabs button.active > .sz-project-fold {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 16px;
+}
+.sz-project-band:has(.sz-discovery:hover)
+  .sz-project-tabs
+  button.active::before,
+.sz-project-band:has(.sz-discovery:focus-visible)
+  .sz-project-tabs
+  button.active::before,
+.sz-project-band[data-interacted="true"]
+  .sz-project-tabs
+  button.active::before {
+  background: var(--sz-chroma);
+}
+.sz-project-action {
+  z-index: 2;
+  padding: 9px 12px;
+  background: #080808d9;
+  right: 18px;
+  bottom: 18px;
+}
+.sz-discovery:hover .sz-project-action svg,
+.sz-discovery:focus-visible .sz-project-action svg {
+  transform: translate(2px, -2px);
+}
+.sz-project-visual .sz-project-caption {
+  padding-left: 0;
+  margin: 18px 0 0;
+  animation: sz-caption-arrival 300ms var(--sz-ease);
+}
+.sz-art-color {
+  clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+  transition: clip-path 320ms var(--sz-ease);
+}
+.sz-discovery:hover .sz-art-color,
+.sz-discovery:focus-visible .sz-art-color,
+.sz-discovery:active .sz-art-color,
+.sz-project-band[data-interacted="true"] .is-active .sz-art-color {
+  clip-path: polygon(72% 0, 100% 0, 100% 100%, 62% 100%);
+}
+.sz-discovery .sz-art--entered .sz-art-color,
+.sz-art--entered .sz-art-color {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+@keyframes sz-small-arrival {
+  from {
+    opacity: 0.45;
+    clip-path: inset(0 1.5% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+@keyframes sz-caption-arrival {
+  from {
+    opacity: 0.35;
+    clip-path: inset(0 2% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+@keyframes sz-menu-arrival {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (min-width: 651px) and (max-width: 850px) {
+  /* Reserve the tallest tab description; the following section must not jump. */
+  .sz-project-stage {
+    min-height: 416px;
+  }
+}
+@media (max-width: 650px) {
+  .sz-project-tabs button > .sz-project-fold {
+    display: none !important;
+  }
+  .sz-project-tabs button::before {
+    inset: auto -7px 20px auto;
+    width: 3px;
+    height: 12px;
+  }
+  .sz-project-tabs button.active {
+    border-bottom-color: #292929;
+  }
+  .sz-stage-images {
+    aspect-ratio: 1.35;
+  }
+  .sz-project-action {
+    right: 12px;
+    bottom: 12px;
+    padding: 7px 10px;
+  }
+  .sz-project-visual .sz-project-caption {
+    margin-top: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sz-project-slide {
+    transform: none;
+  }
+  .sz-project-slide:not(.is-active) {
+    visibility: hidden;
+  }
+}
+
+/* Only the content sheet turns. Header, footer and reading controls stay put. */
+@media (min-width: 851px) and (prefers-reduced-motion: no-preference) {
+  .sz-main {
+    view-transition-name: sz-page;
+  }
+  .sz-theme-changing .sz-main {
+    view-transition-name: none;
+  }
+  html:has(.sz-site):not(.sz-theme-changing)::view-transition-old(root),
+  html:has(.sz-site):not(.sz-theme-changing)::view-transition-new(root) {
+    animation: none;
+  }
+  ::view-transition-group(sz-page) {
+    animation-duration: 320ms;
+  }
+  ::view-transition-old(sz-page) {
+    animation: sz-page-close 220ms ease-out both;
+    transform-origin: left center;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-new(sz-page) {
+    animation: sz-page-open 320ms cubic-bezier(0.22, 0.68, 0, 1) both;
+    transform-origin: right center;
+    mix-blend-mode: normal;
+  }
+  html[data-sz-turn="back"]::view-transition-old(sz-page) {
+    transform-origin: right center;
+  }
+  html[data-sz-turn="back"]::view-transition-new(sz-page) {
+    transform-origin: left center;
+  }
+  html:has(.sz-site)::view-transition {
+    pointer-events: none;
+  }
+}
+@keyframes sz-page-close {
+  to {
+    opacity: 0;
+    transform: scaleX(0.988);
+    clip-path: inset(0 1% 0 0);
+  }
+}
+@keyframes sz-page-open {
+  from {
+    opacity: 0.35;
+    transform: scaleX(0.988);
+    clip-path: inset(0 0 0 2%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(sz-page),
+  ::view-transition-old(sz-page),
+  ::view-transition-new(sz-page) {
+    animation: none !important;
+  }
+}

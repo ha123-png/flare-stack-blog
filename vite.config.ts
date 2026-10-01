@@ -11,15 +11,19 @@ import { z } from "zod";
 import packageJson from "./package.json";
 
 import { themeNames, themes } from "./src/features/theme/registry";
+import { assertSafeLaunch, configPath, persistPath } from "./scripts/local-dev/guard.mjs";
 
 const buildEnvSchema = z.object({
   THEME: z.enum(themeNames).catch("default"),
 });
 
-const config = defineConfig(({ mode }) => {
+const config = defineConfig(({ mode, command }) => {
+  const localDev = command === "serve" || process.env.LOCAL_DEV_ONLY === "szweb-local-v1";
+  if (localDev) assertSafeLaunch();
   const env = loadEnv(mode, process.cwd(), "");
   const buildEnv = buildEnvSchema.parse(env);
   return {
+    ...(localDev ? { server: { fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.dev.vars*", "**/.local-dev/**", "**/.wrangler/**", "**/wrangler.local.jsonc", "**/secrets.json"] }, watch: { ignored: ["**/.local-dev/**", "**/.wrangler/**", "**/scripts/local-dev/**", "**/docs/**", "**/.husky/**"] } } } : {}),
     define: {
       __APP_VERSION__: JSON.stringify(packageJson.version),
       __THEME_NAME__: JSON.stringify(buildEnv.THEME),
@@ -27,6 +31,10 @@ const config = defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
+        ...(localDev ? {
+          "@/features/ai/ai.service": path.resolve(__dirname, "scripts/local-dev/ai.mock.ts"),
+          "worker-mailer": path.resolve(__dirname, "scripts/local-dev/mailer.mock.ts"),
+        } : {}),
         "@": path.resolve(__dirname, "./src"),
         "@theme": path.resolve(
           __dirname,
@@ -36,12 +44,14 @@ const config = defineConfig(({ mode }) => {
     },
     plugins: [
       paraglideVitePlugin({
-        project: "./project.inlang",
+        ...(localDev ? { cleanOutdir: false } : {}),
+        project: localDev ? "./.local-dev/project.inlang" : "./project.inlang",
         outdir: "./src/paraglide",
         strategy: ["cookie", "preferredLanguage", "baseLocale"],
         cookieName: "LOCALE",
       }),
       cloudflare({
+        ...(localDev ? { configPath, persistState: { path: persistPath }, remoteBindings: false, inspectorPort: false } : {}),
         viteEnvironment: {
           name: "ssr",
         },
@@ -50,7 +60,7 @@ const config = defineConfig(({ mode }) => {
         projects: ["./tsconfig.json"],
       }),
       tailwindcss(),
-      devtools(),
+      ...(!localDev ? [devtools()] : []),
       tanstackStart(),
       viteReact(),
     ],
