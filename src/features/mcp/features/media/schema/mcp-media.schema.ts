@@ -30,6 +30,32 @@ export const McpMediaItemSchema = z.object({
   inUse: z.boolean().describe("Whether any post references this media."),
 });
 
+export const McpMediaUploadFromUrlInputSchema = z.object({
+  url: z
+    .string()
+    .trim()
+    .min(1)
+    .max(8192)
+    .describe(
+      "Public HTTPS image URL. Credentials and obvious local/private targets are rejected.",
+    ),
+  fileName: z
+    .string()
+    .trim()
+    .min(1)
+    .max(255)
+    .optional()
+    .describe(
+      "Optional original file name; paths, query strings and unsafe characters are removed.",
+    ),
+});
+
+export const McpMediaUploadOutputSchema = McpMediaItemSchema.extend({
+  inUse: z
+    .literal(false)
+    .describe("New uploads are not yet referenced by posts."),
+});
+
 export const McpMediaListOutputSchema = z.object({
   items: z.array(McpMediaItemSchema).describe("Matching media items."),
   nextCursor: z
