@@ -7,6 +7,8 @@ import "./styles/editorial.css";
 import "./styles/motion.css";
 import "./styles/fold.css";
 import "./styles/folio.css";
+import "./styles/refinement.css";
+import "./styles/book-cover.css";
 import { lazy } from "react";
 import Toaster from "@/components/ui/toaster";
 import type { ThemeComponents } from "@/features/theme/contract/components";
@@ -14,7 +16,6 @@ import { config } from "./config";
 import { AuthLayout, PublicLayout, UserLayout } from "./layouts/shell";
 import { AboutPage } from "./pages/about";
 import { ArchivePage } from "./pages/archive";
-import { DirectoryPage } from "./pages/directory";
 import {
   ForgotPasswordPage,
   LoginPage,
@@ -22,6 +23,7 @@ import {
   ResetPasswordPage,
   VerifyEmailPage,
 } from "./pages/auth";
+import { DirectoryPage } from "./pages/directory";
 import { ErrorPage, NotFoundPage } from "./pages/error";
 import { FriendLinksPage, FriendLinksPageSkeleton } from "./pages/friend-links";
 import { HomePage, HomePageSkeleton } from "./pages/home";

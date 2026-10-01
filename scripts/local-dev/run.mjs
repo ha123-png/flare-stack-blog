@@ -42,16 +42,17 @@ else if (action === 'seed' || action === 'seed-stress') {
   if (action === 'seed-stress') env.LOCAL_FIXTURE_STRESS = '1';
 }
 else if (action === 'i18n') { command = node; args = ['scripts/local-dev/compile-i18n.mjs']; }
-else if (action === 'smoke' || action === 'theme-smoke' || action === 'fold-smoke' || action === 'folio-smoke') {
+else if (action === 'refresh-config') { command = node; args = ['scripts/local-dev/refresh-config.ts']; }
+else if (action === 'smoke' || action === 'theme-smoke' || action === 'fold-smoke' || action === 'folio-smoke' || action === 'refinement-smoke' || action === 'paper-smoke') {
   env.LOCAL_PLAYWRIGHT_PATH = process.env.LOCAL_PLAYWRIGHT_PATH || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
-  command = node; args = [action === 'folio-smoke' ? 'scripts/local-dev/folio-smoke.mjs' : action === 'fold-smoke' ? 'scripts/local-dev/zheye-smoke.mjs' : action === 'theme-smoke' ? 'scripts/local-dev/szweb-smoke.mjs' : 'scripts/local-dev/browser-smoke.mjs'];
+  command = node; args = [action === 'paper-smoke' ? 'scripts/local-dev/paper-smoke.mjs' : action === 'refinement-smoke' ? 'scripts/local-dev/refinement-smoke.mjs' : action === 'folio-smoke' ? 'scripts/local-dev/folio-smoke.mjs' : action === 'fold-smoke' ? 'scripts/local-dev/zheye-smoke.mjs' : action === 'theme-smoke' ? 'scripts/local-dev/szweb-smoke.mjs' : 'scripts/local-dev/browser-smoke.mjs'];
 }
 else if (action === 'start') { command = node; args = ['node_modules/vite/bin/vite.js', 'dev', '--host', 'localhost', '--port', '3000', '--strictPort']; }
 else if (action === 'typecheck') { command = node; args = ['node_modules/typescript/bin/tsc', '--noEmit']; }
 else if (action === 'lint') { command = node; args = ['node_modules/@biomejs/biome/bin/biome', 'lint']; }
 else if (action === 'test') { command = node; args = ['node_modules/vitest/vitest.mjs', 'run', '--config', 'vitest.node.config.ts']; }
 else if (action === 'build') { command = node; args = ['node_modules/vite/bin/vite.js', 'build']; }
-else throw new Error('Usage: node scripts/local-dev/run.mjs init|install|check|migrate|seed|seed-stress|i18n|start|typecheck|lint|test|build|smoke|theme-smoke|fold-smoke|folio-smoke');
+else throw new Error('Usage: node scripts/local-dev/run.mjs init|install|check|migrate|seed|seed-stress|i18n|start|typecheck|lint|test|build|smoke|theme-smoke|fold-smoke|folio-smoke|refinement-smoke|paper-smoke|refresh-config');
 
 if (action === 'start' || action === 'i18n' || action === 'build') prepareOfflineBuild();
 if (action !== 'install') {

@@ -47,7 +47,7 @@ const config = defineConfig(({ mode, command }) => {
         ...(localDev ? { cleanOutdir: false } : {}),
         project: localDev ? "./.local-dev/project.inlang" : "./project.inlang",
         outdir: "./src/paraglide",
-        strategy: ["cookie", "preferredLanguage", "baseLocale"],
+        strategy: ["cookie", "baseLocale"],
         cookieName: "LOCALE",
       }),
       cloudflare({

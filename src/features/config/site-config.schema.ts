@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Messages } from "@/lib/i18n";
+import { ProjectsSchema, WelcomeSchema } from "./projects.schema";
 import { SOCIAL_PLATFORM_KEYS } from "./utils/social-platforms";
 
 export const SocialLinkSchema = z.object({
@@ -286,6 +287,8 @@ export const FullSiteConfigSchema = z.object({
   title: createSiteTextSchema(120),
   author: createSiteTextSchema(80),
   description: createSiteTextSchema(300),
+  welcome: WelcomeSchema.optional(),
+  projects: ProjectsSchema.optional(),
   social: z.array(SocialLinkSchema),
   icons: z.object({
     faviconSvg: createAssetPathSchema(),
@@ -306,6 +309,8 @@ export function createSiteConfigInputFormSchema(messages: Messages) {
     title: createSiteTextFormSchema(120, messages).optional(),
     author: createSiteTextFormSchema(80, messages).optional(),
     description: createSiteTextFormSchema(300, messages).optional(),
+    welcome: WelcomeSchema.optional(),
+    projects: ProjectsSchema.optional(),
     social: z.array(SocialLinkSchema).optional(),
     icons: z
       .object({
@@ -331,6 +336,8 @@ export const SiteConfigInputSchema = z.object({
   title: createSiteTextSchema(120).optional(),
   author: createSiteTextSchema(80).optional(),
   description: createSiteTextSchema(300).optional(),
+  welcome: WelcomeSchema.optional(),
+  projects: ProjectsSchema.optional(),
   social: z.array(SocialLinkSchema).optional(),
   icons: z
     .object({

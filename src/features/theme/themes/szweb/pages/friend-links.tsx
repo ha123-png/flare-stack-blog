@@ -2,14 +2,47 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { FriendLinksPageProps } from "@/features/theme/contract/pages";
 import { m } from "@/paraglide/messages";
+import { PageHeading, useSite } from "../components/primitives";
+import { text } from "../i18n";
 
 export function FriendLinksPage({ links }: FriendLinksPageProps) {
+  const projects = (useSite().projects ?? []).filter((project) => project.url);
   return (
     <div className="sz-account-page sz-friend-links-page">
-      <header className="sz-account-heading sz-friend-links-heading">
-        <h1 className="sz-account-title">{m.friend_links_title()}</h1>
-        <p className="sz-account-description">{m.friend_links_desc()}</p>
-      </header>
+      <PageHeading
+        display
+        title={m.friend_links_title()}
+        description={m.friend_links_desc()}
+        className="sz-friend-links-heading"
+      />
+
+      {!!projects.length && (
+        <section
+          className="sz-own-sites"
+          aria-label={text("我的站点", "My sites")}
+        >
+          <p className="sz-label">{text("我的站点", "My sites")}</p>
+          <nav>
+            {projects.map((project) => (
+              <a
+                key={project.id}
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {project.title}
+                <ArrowUpRight size={14} />
+              </a>
+            ))}
+          </nav>
+          <p className="sz-muted">
+            {text(
+              "一些正在生长的作品，也欢迎你去坐坐。",
+              "A few things I am making. You are welcome to explore.",
+            )}
+          </p>
+        </section>
+      )}
 
       {links.length > 0 ? (
         <ol className="sz-friend-link-list">
@@ -75,10 +108,12 @@ export function FriendLinksPageSkeleton() {
       aria-busy="true"
       aria-label={m.friend_links_title()}
     >
-      <header className="sz-account-heading sz-friend-links-heading">
-        <h1 className="sz-account-title">{m.friend_links_title()}</h1>
-        <div className="sz-skeleton-line sz-skeleton-description" />
-      </header>
+      <PageHeading
+        display
+        title={m.friend_links_title()}
+        description={m.friend_links_desc()}
+        className="sz-friend-links-heading"
+      />
       <ol className="sz-friend-link-list sz-friend-link-list-skeleton">
         {Array.from({ length: 5 }, (_, index) => (
           <li className="sz-friend-link-row" key={index}>

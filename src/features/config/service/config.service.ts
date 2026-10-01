@@ -8,6 +8,10 @@ import {
 } from "@/features/config/config.schema";
 import * as ConfigRepo from "@/features/config/data/config.data";
 import { FullSiteConfigSchema } from "@/features/config/site-config.schema";
+import {
+  ZHEYE_PROJECTS,
+  ZHEYE_WELCOME,
+} from "@/features/config/projects.schema";
 import type { SocialLink } from "@/features/config/utils/social-platforms";
 import * as Storage from "@/features/media/data/media.storage";
 import { zheyePublicTitle } from "@/features/theme/themes/szweb/identity";
@@ -86,11 +90,20 @@ export function resolveSiteConfig(
   config: SystemConfig | null | undefined,
 ): SiteConfig {
   const configDefaultBackground = config?.site?.theme?.default?.background;
+  const isZheye =
+    typeof __THEME_NAME__ !== "undefined" && __THEME_NAME__ === "szweb";
+  const title = config?.site?.title ?? blogConfig.title;
+  const description = config?.site?.description ?? blogConfig.description;
 
   return FullSiteConfigSchema.parse({
-    title: config?.site?.title ?? blogConfig.title,
+    title: isZheye ? zheyePublicTitle(title) : title,
     author: config?.site?.author ?? blogConfig.author,
-    description: config?.site?.description ?? blogConfig.description,
+    description:
+      isZheye && description === blogConfig.description
+        ? ZHEYE_WELCOME.description
+        : description,
+    welcome: config?.site?.welcome ?? (isZheye ? ZHEYE_WELCOME : undefined),
+    projects: config?.site?.projects ?? (isZheye ? ZHEYE_PROJECTS : undefined),
     social: migrateSocial(config?.site?.social),
     icons: {
       faviconSvg:
@@ -178,11 +191,7 @@ export async function getSiteConfig(
   context: DbContext & { executionCtx: ExecutionContext },
 ) {
   const config = await getSystemConfig(context);
-  const site = resolveSiteConfig(config);
-  // Public presentation only. No persisted config, author, or other theme changes.
-  return typeof __THEME_NAME__ !== "undefined" && __THEME_NAME__ === "szweb"
-    ? { ...site, title: zheyePublicTitle(site.title) }
-    : site;
+  return resolveSiteConfig(config);
 }
 
 export async function updateSystemConfig(

@@ -1,27 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Rss } from "lucide-react";
+import { BookCover } from "../components/book-cover";
 import { useSite } from "../components/primitives";
 import { text } from "../i18n";
-import { szwebSite } from "../site";
 
 export function AboutPage() {
   const site = useSite();
   return (
     <div className="sz-wrap sz-colophon">
-      <header className="sz-colophon-heading">
-        <p className="sz-label">{text("关于折页", "About this space")}</p>
-        <h1>{text("这里是折页。", "This is 折页.")}</h1>
-        <p className="sz-colophon-deck">
-          {text("写下想法，", "Write an idea.")}
-          <br />
-          {text("也把它做出来。", "Then make it real.")}
-        </p>
-      </header>
+      <BookCover about />
       <div className="sz-colophon-grid">
         <div className="sz-colophon-story">
           <p className="sz-colophon-lead">
             {text(
-              "我把写作、项目和还没有完全想清楚的过程留在这里。",
+              `我是 ${site.author}。在这里写下思考，也让想法成形。`,
               "A place for writing, projects, and the thoughts still taking shape.",
             )}
           </p>
@@ -33,16 +25,36 @@ export function AboutPage() {
           </p>
           <p>
             {text(
-              "有些想法适合写成文章，有些需要做成一个可以使用的东西。折页把它们放在一起，慢慢积累。",
+              "有些想法适合写成文章，有些需要做成一个可以使用的东西。我把它们放在一起，让作品与文字互相照应，慢慢积累。",
               "Some ideas become essays; others need to become something you can use. Here, they belong together.",
             )}
           </p>
-          {szwebSite.now.length > 0 && (
+          {!!site.projects?.length && (
             <section className="sz-colophon-now">
-              <h2>{text("现在在做", "Currently")}</h2>
-              {szwebSite.now.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
+              <h2>{text("作品也在这里", "Work, in progress")}</h2>
+              <nav
+                className="sz-colophon-projects"
+                aria-label={text("打开作品", "Visit the work")}
+              >
+                {site.projects
+                  .filter((project) => project.url)
+                  .map((project) => (
+                    <a
+                      className="sz-colophon-work"
+                      key={project.id}
+                      href={project.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-chroma={project.accent}
+                    >
+                      <span>
+                        <strong>{project.title}</strong>
+                        <small>{project.category}</small>
+                      </span>
+                      <ArrowUpRight size={14} />
+                    </a>
+                  ))}
+              </nav>
             </section>
           )}
         </div>

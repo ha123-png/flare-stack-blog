@@ -4,7 +4,11 @@ import type {
   SearchPageProps,
   SearchResultItem,
 } from "@/features/theme/contract/pages";
-import { articleChroma } from "../components/article-chroma";
+import {
+  articleChroma,
+  articlePaperAccent,
+} from "../components/article-chroma";
+import { useSite } from "../components/primitives";
 import { text } from "../i18n";
 
 import { parseSafeSnippet } from "./_shared/search-snippets";
@@ -42,6 +46,7 @@ export function SearchPage({
   onBack,
   onRetry,
 }: SearchPageProps) {
+  const { projects } = useSite();
   const inputRef = useRef<HTMLInputElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
   const normalizedQuery = query.trim();
@@ -250,6 +255,10 @@ export function SearchPage({
                     <button
                       aria-selected={activeIndex === index}
                       className={`sz-search-result sz-paper-row${activeIndex === index ? " is-active" : ""}`}
+                      data-paper-accent={articlePaperAccent(
+                        result.post,
+                        projects,
+                      )}
                       data-chroma={articleChroma(
                         result.post.slug,
                         result.post.tags,

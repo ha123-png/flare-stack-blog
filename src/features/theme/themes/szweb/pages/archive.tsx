@@ -1,7 +1,11 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
-import { articleChroma } from "../components/article-chroma";
+import {
+  articleChroma,
+  articlePaperAccent,
+} from "../components/article-chroma";
+import { PageHeading, useSite } from "../components/primitives";
 import { text } from "../i18n";
 import { archiveDateParts } from "./_shared/archive-index.ts";
 import { useArchiveIndex } from "./_shared/use-archive-index";
@@ -46,6 +50,7 @@ function monthLabel(month: number, style: "short" | "long" = "long") {
 }
 
 export function ArchivePage() {
+  const { projects } = useSite();
   const {
     groups: typedGroups,
     loadedPosts,
@@ -56,6 +61,10 @@ export function ArchivePage() {
     isFetchNextPageError,
   } = useArchiveIndex();
   const { hash } = useLocation();
+  const hashYear = /^year-(\d{4})$/.exec(hash);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const activeYear =
+    selectedYear ?? (hashYear ? Number(hashYear[1]) : typedGroups[0]?.year);
   const [openYears, setOpenYears] = useState<Set<number>>(
     () => new Set(typedGroups[0] ? [typedGroups[0].year] : []),
   );
@@ -70,6 +79,7 @@ export function ArchivePage() {
     const year = Number(match[1]);
     if (!typedGroups.some((group) => group.year === year)) return;
     jumpedHash.current = hash;
+    setSelectedYear(year);
     setOpenYears((current) => new Set(current).add(year));
     const frame = requestAnimationFrame(() =>
       document.getElementById(hash)?.scrollIntoView({ block: "start" }),
@@ -78,6 +88,7 @@ export function ArchivePage() {
   }, [hash, typedGroups]);
 
   const toggleYear = (year: number) => {
+    setSelectedYear(year);
     setOpenYears((current) => {
       const next = new Set(current);
       if (next.has(year)) next.delete(year);
@@ -87,6 +98,7 @@ export function ArchivePage() {
   };
 
   const jumpToMonth = (year: number, month: number) => {
+    setSelectedYear(year);
     setOpenYears((current) => new Set(current).add(year));
     const targetId = monthId(year, month);
     requestAnimationFrame(() => {
@@ -114,25 +126,21 @@ export function ArchivePage() {
 
   return (
     <div className="sz-wrap sz-archive-page">
-      <header className="sz-page-heading">
-        <div>
-          <p className="sz-label">
-            {text("成长档案 / ARCHIVE", "A growing archive")}
-          </p>
-          <h1>{text("时间", "Time")}</h1>
-          <p className="sz-muted">
-            {text(
-              "从现在回望。那些写下的、做过的，都留在时间里。",
-              "Looking back from here. A record of what I wrote, tried, and made.",
-            )}
-          </p>
-        </div>
+      <PageHeading
+        display
+        eyebrow={text("成长档案 / ARCHIVE", "ARCHIVE")}
+        title={text("时间", "Time")}
+        description={text(
+          "从现在回望。那些写下的、做过的，都留在时间里。",
+          "Looking back from here. A record of what I wrote, tried, and made.",
+        )}
+      >
         <p className="sz-archive-range" aria-live="polite" role="status">
           {rangeText}
         </p>
-      </header>
+      </PageHeading>
 
-      {typedGroups.length > 0 && (
+      {typedGroups.length > 1 && (
         <nav
           className="sz-archive-jump"
           aria-label={text("按年份翻阅", "Browse by year")}
@@ -141,9 +149,11 @@ export function ArchivePage() {
             <a
               key={group.year}
               href={`#year-${group.year}`}
-              onClick={() =>
-                setOpenYears((current) => new Set(current).add(group.year))
-              }
+              aria-current={activeYear === group.year ? "location" : undefined}
+              onClick={() => {
+                setSelectedYear(group.year);
+                setOpenYears((current) => new Set(current).add(group.year));
+              }}
             >
               {group.year}
             </a>
@@ -185,8 +195,8 @@ export function ArchivePage() {
                     <span className="sz-archive-year-number">{group.year}</span>
                     <span className="sz-archive-year-count">
                       {text(
-                        `${group.count} 篇${hasNextPage ? "（当前已载入）" : ""}`,
-                        `${group.count} posts${hasNextPage ? " (loaded so far)" : ""}`,
+                        `${group.count} 篇${hasNextPage ? " · 当前已载入" : ""}`,
+                        `${group.count} posts${hasNextPage ? " · loaded so far" : ""}`,
                       )}
                     </span>
                     <span className="sz-archive-year-icon" aria-hidden="true">
@@ -252,6 +262,10 @@ export function ArchivePage() {
                               key={post.id}
                               className="sz-paper-row"
                               data-chroma={articleChroma(post.slug, post.tags)}
+                              data-paper-accent={articlePaperAccent(
+                                post,
+                                projects,
+                              )}
                             >
                               <time dateTime={date?.dateTime}>
                                 {date?.day ?? "—"}

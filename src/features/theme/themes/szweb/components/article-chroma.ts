@@ -1,4 +1,27 @@
+import {
+  type Project,
+  projectMatchesPost,
+} from "@/features/config/projects.schema";
 import type { Chroma } from "../site";
+
+/** Project inks take priority; other leaves keep a stable color from six matte papers. */
+export function articlePaperAccent(
+  post: { slug: string; tags?: readonly (string | { name: string })[] },
+  projects: readonly Project[] = [],
+): Chroma | "champagne" {
+  const linkedPost = {
+    slug: post.slug,
+    tags: post.tags?.map((tag) =>
+      typeof tag === "string" ? { name: tag } : tag,
+    ),
+  };
+  const projectAccent = projects.find((project) =>
+    projectMatchesPost(project, linkedPost),
+  )?.accent;
+  if (projectAccent) return projectAccent;
+  const accent = articleChroma(post.slug, post.tags);
+  return accent === "petroleum" ? "champagne" : (accent ?? "champagne");
+}
 
 export const articleAccents: readonly Chroma[] = [
   "cobalt",

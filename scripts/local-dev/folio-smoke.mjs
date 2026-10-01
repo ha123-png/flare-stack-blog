@@ -215,23 +215,27 @@ try {
   );
   const row = page.locator(".sz-article-row").first();
   await row.scrollIntoViewIfNeeded();
+  await page.mouse.move(12, 12);
   await page.waitForTimeout(350);
   const before = await row.locator(".sz-article-copy").boundingBox();
   await row.hover();
-  await page.waitForTimeout(350);
+  await page.waitForTimeout(650);
   const after = await row.locator(".sz-article-copy").boundingBox();
   check(
-    "Opening the fore-edge never moves the reading text",
-    Math.abs(before.x - after.x) < 0.5 && Math.abs(before.y - after.y) < 0.5,
+    "Paper lifts gently without resizing the reading text",
+    Math.abs(before.x - after.x) < 0.5 &&
+      Math.abs(before.y - after.y - 2) < 0.5 &&
+      Math.abs(before.width - after.width) < 0.5 &&
+      Math.abs(before.height - after.height) < 0.5,
   );
   check(
-    "Color is a side fold, not a bottom stripe",
+    "Paper reverse is a compact corner fold",
     await row.evaluate((node) => {
       const edge = getComputedStyle(node, "::before");
       return (
         edge.opacity === "1" &&
         parseFloat(edge.width) <= 24 &&
-        parseFloat(edge.height) > parseFloat(edge.width) &&
+        parseFloat(edge.height) === parseFloat(edge.width) &&
         edge.clipPath !== "none"
       );
     }),

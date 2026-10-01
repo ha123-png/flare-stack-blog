@@ -2,11 +2,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { tagsQueryOptions } from "@/features/tags/queries";
+import { PageHeading, useSite } from "../components/primitives";
 import { text } from "../i18n";
-import { isPublicTag, szwebSite } from "../site";
+import { isPublicTag } from "../site";
 import { useArchiveIndex } from "./_shared/use-archive-index";
 
 export function DirectoryPage() {
+  const { projects = [] } = useSite();
   const { data: allTags } = useSuspenseQuery(tagsQueryOptions);
   const tags = allTags.filter((tag) => isPublicTag(tag.name));
   const { groups, count, hasNextPage, isFetchNextPageError, fetchNextPage } =
@@ -18,21 +20,20 @@ export function DirectoryPage() {
     );
   return (
     <div className="sz-wrap sz-directory-page">
-      <header className="sz-page-heading sz-directory-heading">
-        <div>
-          <p className="sz-label">{text("目录 / CONTENTS", "Contents")}</p>
-          <h1>{text("索引", "Index")}</h1>
-          <p className="sz-muted">
-            {text(
-              "写作、作品、时间与连接。从这里，找到下一页。",
-              "Writing, work, time and connections. Find your next page here.",
-            )}
-          </p>
-        </div>
+      <PageHeading
+        display
+        className="sz-directory-heading"
+        eyebrow={text("站点目录 / CONTENTS", "CONTENTS")}
+        title={text("索引", "Index")}
+        description={text(
+          "写作、作品、时间与连接。从这里，找到下一页。",
+          "Writing, work, time and connections. Find your next page here.",
+        )}
+      >
         <span className="sz-directory-edition">
           {text("四个分册 · 持续增补", "Four chapters · Still unfolding")}
         </span>
-      </header>
+      </PageHeading>
       <div className="sz-directory-grid">
         <section aria-labelledby="sz-directory-writing">
           <header className="sz-directory-section-heading">
@@ -61,8 +62,13 @@ export function DirectoryPage() {
           </Link>
           <div className="sz-directory-topics">
             {tags.slice(0, 8).map((tag) => (
-              <Link key={tag.name} to="/posts" search={{ tagName: tag.name }}>
-                {tag.name}
+              <Link
+                className="sz-topic-paper"
+                key={tag.name}
+                to="/posts"
+                search={{ tagName: tag.name }}
+              >
+                <span>{tag.name}</span>
                 <sup>{tag.postCount}</sup>
               </Link>
             ))}
@@ -86,7 +92,7 @@ export function DirectoryPage() {
               </p>
             </div>
           </header>
-          {szwebSite.projects.map((project) => (
+          {projects.map((project) => (
             <Link
               key={project.id}
               to="/projects/$projectId"

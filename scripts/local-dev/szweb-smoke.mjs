@@ -33,7 +33,7 @@ async function visit(name,route,width=1440,screenshot=true){
 }
 try{
  for(const w of [1440,1280,1024,768,430,390,360,320])await visit("home-"+w,"/",w,[1440,768,390,320].includes(w));
- for(const [name,route] of [["articles","/posts"],["post","/post/edge-blog-in-a-weekend"],["search","/search?q=搜索"],["archive","/archive"],["tags","/tags"],["projects","/projects"],["project","/projects/atlas"],["about","/about"],["friends","/friend-links"],["login","/login"],["register","/register"],["forgot","/forgot-password"],["stress-post","/post/local-archive-stress-001"]]){
+ for(const [name,route] of [["articles","/posts"],["post","/post/edge-blog-in-a-weekend"],["search","/search?q=搜索"],["archive","/archive"],["tags","/tags"],["projects","/projects"],["project","/projects/zhiyi"],["about","/about"],["friends","/friend-links"],["login","/login"],["register","/register"],["forgot","/forgot-password"],["stress-post","/post/local-archive-stress-001"]]){
    await visit(name+"-1440",route);
    if(["articles","post","search","archive","tags","stress-post"].includes(name)) await visit(name+"-390",route,390);
  }

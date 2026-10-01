@@ -26,7 +26,7 @@ import {
   foldChapter,
   foldChapters as links,
 } from "../components/fold-navigation";
-import { Brand } from "../components/primitives";
+import { Brand, useSite } from "../components/primitives";
 import { QuickSearchProvider, SearchTrigger } from "../components/quick-search";
 import { switchThemeGently } from "../components/theme-transition";
 import { text as uiText } from "../i18n";
@@ -268,6 +268,7 @@ function Header({
   );
 }
 function Footer() {
+  const site = useSite();
   return (
     <footer className="sz-footer">
       <div className="sz-wrap">
@@ -277,12 +278,7 @@ function Footer() {
               {uiText("封底 / COLOPHON", "Colophon")}
             </span>
             <Brand />
-            <p>
-              {uiText(
-                "写作、项目与过程。",
-                "Writing, projects, and the work between.",
-              )}
-            </p>
+            <p>{site.welcome?.description ?? site.description}</p>
           </div>
           <nav aria-label={uiText("页脚导航", "Footer navigation")}>
             <Link to="/directory" className="sz-footer-index">
@@ -301,7 +297,7 @@ function Footer() {
         </div>
         <div className="sz-footer-bottom">
           <span>
-            © {new Date().getUTCFullYear()} 折页{" "}
+            © {new Date().getUTCFullYear()} {site.title}{" "}
             <span className="sz-footer-credit">
               / Powered by{" "}
               <a

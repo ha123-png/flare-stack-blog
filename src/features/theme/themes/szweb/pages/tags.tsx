@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { tagsQueryOptions } from "@/features/tags/queries";
+import { PageHeading } from "../components/primitives";
 import { text } from "../i18n";
 
 type TagSort = "popular" | "name";
@@ -39,21 +40,19 @@ export function TagsPage() {
 
   return (
     <div className="sz-wrap sz-tags-page">
-      <header className="sz-page-heading">
-        <div>
-          <p className="sz-label">{text("主题索引", "Topic index")}</p>
-          <h1>{text("标签", "Tags")}</h1>
-          <p className="sz-muted">
-            {text(
-              "从一个词出发，找到相关的文章。",
-              "Start with a word and find related writing.",
-            )}
-          </p>
-        </div>
+      <PageHeading
+        display
+        eyebrow={text("主题索引 / TOPICS", "TOPICS")}
+        title={text("标签", "Tags")}
+        description={text(
+          "从一个词出发，找到相关的文章。",
+          "Start with a word and find related writing.",
+        )}
+      >
         <p className="sz-tags-total">
           {text(`${tags.length} 个主题`, `${tags.length} topics`)}
         </p>
-      </header>
+      </PageHeading>
 
       <section
         className="sz-tag-directory-tools"

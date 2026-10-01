@@ -47,6 +47,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           name: "description",
           content: loaderData?.siteConfig?.description,
         },
+        { property: "og:site_name", content: loaderData?.siteConfig?.title },
       ],
       links: [
         {

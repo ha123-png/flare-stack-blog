@@ -119,12 +119,6 @@
   color: #aaa;
   font-size: 12px;
 }
-.sz-footer .sz-brand:is(:hover, :focus-visible) .sz-brand-mark i:nth-child(2) {
-  transform: translateX(-4px) skewY(4deg);
-}
-.sz-footer .sz-brand:is(:hover, :focus-visible) .sz-brand-mark i:last-child {
-  transform: translateX(-7px) skewY(-4deg);
-}
 @media (max-width: 650px) {
   .sz-footer {
     padding-top: 44px;

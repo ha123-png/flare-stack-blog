@@ -3,7 +3,7 @@ import { ArrowUpRight, Plus } from "lucide-react";
 import { useState } from "react";
 import { text as uiText } from "../i18n";
 import type { Project } from "../site";
-import { szwebSite } from "../site";
+import { useSite } from "./primitives";
 
 export function ProjectImage({
   project,
@@ -26,44 +26,38 @@ export function ProjectImage({
       <img
         src={project.image}
         alt={project.title + " · " + project.category}
-        width={1200}
-        height={800}
+        width={1440}
+        height={900}
         loading="lazy"
-        className="sz-art-mono"
+        className="sz-project-screenshot"
       />
-      {project.accent && (
-        <img
-          src={project.image}
-          alt=""
-          aria-hidden="true"
-          width={1200}
-          height={800}
-          loading="lazy"
-          className="sz-art-color"
-        />
-      )}
     </div>
   );
 }
 export function ProjectStage() {
-  const projects: Project[] = szwebSite.projects;
-  const [selected, setSelected] = useState(0);
+  const projects: Project[] = useSite().projects ?? [];
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = Math.max(
+    0,
+    projects.findIndex((project) => project.id === selectedId),
+  );
   const [interacted, setInteracted] = useState(false);
   const select = (index: number) => {
     setInteracted(true);
-    setSelected(index);
+    setSelectedId(projects[index].id);
   };
-  const current = projects[selected];
+  const current = projects[selected] ?? projects[0];
   if (!current) return null;
   return (
     <section
       className="sz-project-band"
       data-chroma={current.accent}
+      data-paper-accent={current.accent}
       data-interacted={interacted}
     >
       <div className="sz-wrap">
         <div className="sz-section-heading">
-          <h2>{uiText("正在做的东西", "Selected projects")}</h2>
+          <h2>{uiText("作品与实践", "Selected projects")}</h2>
           <Link className="sz-text-link" to="/projects">
             {uiText("全部项目", "All projects")}
             <Plus size={15} />
@@ -85,6 +79,7 @@ export function ProjectStage() {
                 aria-controls="project-panel"
                 tabIndex={selected === index ? 0 : -1}
                 className={selected === index ? "active" : ""}
+                data-paper-accent={project.accent}
                 onClick={() => select(index)}
                 onKeyDown={(event) => {
                   if (
@@ -117,7 +112,7 @@ export function ProjectStage() {
                 }}
               >
                 <span>
-                  {project.title}
+                  <strong>{project.title}</strong>
                   <small>{project.category}</small>
                 </span>
                 <span
@@ -162,7 +157,13 @@ export function ProjectStage() {
               </span>
             </Link>
             <p className="sz-project-caption" key={current.id}>
-              <span>{current.category}</span> <span>{current.year}</span>
+              <span>
+                {String(selected + 1).padStart(2, "0")} /{" "}
+                {String(projects.length).padStart(2, "0")}
+              </span>
+              <span>
+                {current.status} · {current.year}
+              </span>
             </p>
           </div>
         </div>

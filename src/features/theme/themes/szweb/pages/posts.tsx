@@ -4,8 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { popularPostsQuery } from "@/features/posts/queries";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import type { PostsPageProps } from "@/features/theme/contract/pages";
-import { articleChroma } from "../components/article-chroma";
+import {
+  articleChroma,
+  articlePaperAccent,
+} from "../components/article-chroma";
 import { ArticlePreview } from "../components/article-preview";
+import { PageHeading, useSite } from "../components/primitives";
 import { text } from "../i18n";
 import { useBatchedViewCounts } from "./_shared/use-batched-view-counts";
 
@@ -87,12 +91,14 @@ function PostRow({
   onTagClick: (tagName: string) => void;
 }) {
   const tags = tagsForPost(post);
+  const { projects } = useSite();
   const date = formatPostDate(post.publishedAt);
 
   return (
     <article
       className={`sz-article-row sz-paper-row${compact ? " is-compact" : ""}${expanded ? " is-expanded" : ""}`}
       data-chroma={articleChroma(post.slug, post.tags)}
+      data-paper-accent={articlePaperAccent(post, projects)}
       data-article={post.slug}
       id={`sz-post-${post.slug}`}
     >
@@ -264,21 +270,19 @@ export function PostsPage({
 
   return (
     <div className="sz-wrap sz-posts-page">
-      <header className="sz-page-heading">
-        <div>
-          <p className="sz-label">{text("写作索引", "Writing index")}</p>
-          <h1>{text("文章", "Articles")}</h1>
-          <p className="sz-muted">
-            {text(
-              "按发布时间浏览，或从一个主题开始。",
-              "Browse by date or start with a topic.",
-            )}
-          </p>
-        </div>
+      <PageHeading
+        display
+        eyebrow={text("写作索引 / WRITING", "WRITING")}
+        title={text("文章", "Articles")}
+        description={text(
+          "按发布时间浏览，或从一个主题开始。",
+          "Browse by date or start with a topic.",
+        )}
+      >
         <p className="sz-article-range" aria-live="polite">
           {loadedLabel}
         </p>
-      </header>
+      </PageHeading>
 
       <section
         className="sz-post-filters"

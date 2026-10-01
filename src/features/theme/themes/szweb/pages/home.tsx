@@ -1,10 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Plus, Rss } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import { tagsQueryOptions } from "@/features/tags/queries";
 import type { HomePageProps } from "@/features/theme/contract/pages/home";
-import { articleChroma } from "../components/article-chroma";
+import {
+  articleChroma,
+  articlePaperAccent,
+} from "../components/article-chroma";
+import { BookCover } from "../components/book-cover";
 import {
   dateLabel,
   EmptyState,
@@ -13,15 +17,17 @@ import {
 } from "../components/primitives";
 import { ProjectStage } from "../components/project-stage";
 import { text as uiText } from "../i18n";
-import { editorialMedia, isPublicTag, szwebSite } from "../site";
+import { isPublicTag } from "../site";
 import { useBatchedViewCounts } from "./_shared/use-batched-view-counts";
 
 function WritingRow({ post, views }: { post: PostItem; views?: number }) {
+  const { projects } = useSite();
   const date = post.publishedAt ? new Date(post.publishedAt) : null;
   return (
     <article
       className="sz-home-row sz-paper-row"
       data-chroma={articleChroma(post.slug, post.tags)}
+      data-paper-accent={articlePaperAccent(post, projects)}
       data-article={post.slug}
     >
       <time dateTime={date?.toISOString()}>
@@ -59,15 +65,17 @@ export function HomePage({
   pinnedPosts = [],
   popularPosts = [],
 }: HomePageProps) {
-  const site = useSite();
   const featured = pinnedPosts[0] ?? posts[0];
   const recent = posts.filter((post) => post.id !== featured?.id).slice(0, 5);
-  const secondaryPinned = pinnedPosts.slice(1);
+  const secondaryPinned = pinnedPosts
+    .slice(1)
+    .filter((post) => !recent.some((item) => item.id === post.id));
   const aside = [
     ...secondaryPinned,
     ...popularPosts.filter(
       (post) =>
         post.id !== featured?.id &&
+        !recent.some((item) => item.id === post.id) &&
         !secondaryPinned.some((pin) => pin.id === post.id),
     ),
   ];
@@ -75,106 +83,51 @@ export function HomePage({
   const { counts: views } = useBatchedViewCounts(
     [...posts, ...pinnedPosts].map((post) => post.slug),
   );
-  const media = featured ? editorialMedia[featured.slug] : undefined;
   return (
     <>
       <div className="sz-wrap">
-        <div className="sz-home-intro">
-          <p>
-            {site.author && (
-              <Link to="/about" className="sz-home-author">
-                {site.author}
-              </Link>
-            )}
-            {szwebSite.introduction} <span>{site.description}</span>
-          </p>
-          <a href="/rss.xml" className="sz-text-link">
-            RSS <Rss size={14} />
-          </a>
-        </div>
+        <BookCover />
         {featured ? (
-          <section
-            className={"sz-featured" + (!media ? " sz-featured--type" : "")}
-          >
-            <div className="sz-featured-copy">
-              <div className="sz-meta">
-                <span className="sz-kicker">
-                  {featured.pinnedAt
-                    ? uiText("精选文章", "Featured")
-                    : uiText("最新文章", "Latest article")}
-                </span>
-                <time
-                  dateTime={
-                    featured.publishedAt
-                      ? new Date(featured.publishedAt).toISOString()
-                      : undefined
-                  }
-                >
-                  {dateLabel(featured.publishedAt)}
-                </time>
-              </div>
-              <h1>
+          <section className="sz-cover-featured">
+            <div className="sz-meta">
+              <span className="sz-kicker">
+                {featured.pinnedAt
+                  ? uiText("精选文章", "Featured")
+                  : uiText("最新文章", "Latest article")}
+              </span>
+              <time
+                dateTime={
+                  featured.publishedAt
+                    ? new Date(featured.publishedAt).toISOString()
+                    : undefined
+                }
+              >
+                {dateLabel(featured.publishedAt)}
+              </time>
+            </div>
+            <div>
+              <h2>
                 <Link to="/post/$slug" params={{ slug: featured.slug }}>
                   {featured.title}
                 </Link>
-              </h1>
+              </h2>
               {featured.summary && (
-                <p className="sz-featured-summary">{featured.summary}</p>
+                <p className="sz-cover-featured-summary">{featured.summary}</p>
               )}
-              <div className="sz-featured-actions">
-                <Link
-                  className="sz-text-link sz-text-link--line"
-                  to="/post/$slug"
-                  params={{ slug: featured.slug }}
-                >
-                  {uiText("阅读全文", "Read the article")}
-                  <ArrowRight size={16} />
-                </Link>
-                <span className="sz-muted">
-                  {featured.readTimeInMinutes} {uiText("分钟阅读", " min read")}
-                </span>
-              </div>
             </div>
-            {media ? (
+            <div className="sz-cover-featured-read">
               <Link
+                className="sz-text-link sz-text-link--line"
                 to="/post/$slug"
                 params={{ slug: featured.slug }}
-                className="sz-featured-media"
               >
-                <img
-                  src={media.image}
-                  alt={media.alt}
-                  width={1200}
-                  height={800}
-                  fetchPriority="high"
-                />
+                {uiText("阅读全文", "Read the article")}
+                <ArrowRight size={16} />
               </Link>
-            ) : (
-              <div className="sz-featured-side">
-                <span className="sz-label">
-                  {uiText(
-                    "写作、过程与观察",
-                    "Writing, process and observation",
-                  )}
-                </span>
-                <TagLinks tags={featured.tags} />
-                <p>
-                  {uiText(
-                    "从一个具体的问题开始，",
-                    "Start with a concrete question.",
-                  )}
-                  <br />
-                  {uiText(
-                    "把值得留下的思考写下来。",
-                    "Keep the thoughts worth returning to.",
-                  )}
-                </p>
-                <Link className="sz-text-link" to="/archive">
-                  {uiText("沿着时间阅读", "Read through time")}
-                  <ArrowRight size={15} />
-                </Link>
-              </div>
-            )}
+              <span className="sz-muted">
+                {featured.readTimeInMinutes} {uiText("分钟阅读", " min read")}
+              </span>
+            </div>
           </section>
         ) : (
           <EmptyState
@@ -189,7 +142,6 @@ export function HomePage({
           />
         )}
       </div>
-      <ProjectStage />
       <section className="sz-wrap sz-home-writing">
         <div className="sz-home-writing-grid">
           <div>
@@ -218,9 +170,11 @@ export function HomePage({
             )}
           </div>
           <aside className="sz-reading-aside">
-            <h2 className="sz-label">
-              {uiText("值得重读", "Worth another read")}
-            </h2>
+            {aside.length > 0 && (
+              <h2 className="sz-label">
+                {uiText("值得重读", "Worth another read")}
+              </h2>
+            )}
             {aside.map((post) => (
               <Link
                 key={post.id}
@@ -247,14 +201,15 @@ export function HomePage({
                   .slice(0, 8)
                   .map((tag) => (
                     <Link
+                      className="sz-topic-paper"
                       key={tag.name}
                       to="/posts"
                       search={{ tagName: tag.name }}
                     >
-                      {tag.name} <sup>{tag.postCount}</sup>
+                      <span>{tag.name}</span> <sup>{tag.postCount}</sup>
                     </Link>
                   ))}
-                <Link to="/tags">
+                <Link className="sz-all-topics" to="/tags">
                   {uiText("全部主题", "All topics")}
                   <ArrowRight size={13} />
                 </Link>
@@ -263,6 +218,7 @@ export function HomePage({
           </aside>
         </div>
       </section>
+      <ProjectStage />
     </>
   );
 }

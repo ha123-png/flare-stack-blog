@@ -22,6 +22,8 @@ import { CommentSection } from "../components/comments/comment-section";
 import { ContentRenderer } from "../components/content/content-renderer";
 import { text } from "../i18n";
 import { isPublicTag } from "../site";
+import { useSite } from "../components/primitives";
+import { projectMatchesPost } from "@/features/config/projects.schema";
 import "../styles/reading.css";
 
 const routeApi = getRouteApi("/_public/post/$slug");
@@ -266,6 +268,9 @@ function CopyLinkButton() {
 }
 
 export function PostPage({ post }: PostPageProps) {
+  const projects = (useSite().projects ?? []).filter((project) =>
+    projectMatchesPost(project, post),
+  );
   const { data: session } = authClient.useSession();
   const { rootId, highlightCommentId } = routeApi.useSearch();
   const articleRef = useRef<HTMLDivElement>(null);
@@ -330,12 +335,26 @@ export function PostPage({ post }: PostPageProps) {
               </Link>
             ))}
           </div>
-          <h1
-            className="sz-post-title"
-          >
-            {post.title}
-          </h1>
+          <h1 className="sz-post-title">{post.title}</h1>
           {post.summary && <p className="sz-post-summary">{post.summary}</p>}
+          {!!projects.length && (
+            <nav
+              className="sz-post-projects"
+              aria-label={text("所属项目", "Related projects")}
+            >
+              <span>{text("这篇文章来自", "From the project")}</span>
+              {projects.map((project) => (
+                <Link
+                  key={project.id}
+                  to="/projects/$projectId"
+                  params={{ projectId: project.id }}
+                >
+                  {project.title}
+                  <span aria-hidden="true">↗</span>
+                </Link>
+              ))}
+            </nav>
+          )}
           <div className="sz-post-meta-row">
             <div className="sz-post-meta">
               <span>

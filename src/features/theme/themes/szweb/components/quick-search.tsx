@@ -10,7 +10,8 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { text } from "../i18n";
 import { parseSafeSnippet } from "../pages/_shared/search-snippets";
-import { articleChroma } from "./article-chroma";
+import { articleChroma, articlePaperAccent } from "./article-chroma";
+import { useSite } from "./primitives";
 
 const QuickSearchContext = createContext<(() => void) | null>(null);
 
@@ -134,6 +135,7 @@ function QuickSearchDialog({
   shouldRestore: () => boolean;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const { projects } = useSite();
   const input = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -389,6 +391,7 @@ function QuickSearchDialog({
               (active === i ? " is-active" : "")
             }
             data-chroma={articleChroma(item.post.slug, item.post.tags)}
+            data-paper-accent={articlePaperAccent(item.post, projects)}
             data-article={item.post.slug}
             onPointerMove={() => setActiveIndex(i)}
             onClick={() => select(item.post.slug)}

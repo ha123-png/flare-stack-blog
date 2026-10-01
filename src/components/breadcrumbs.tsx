@@ -1,12 +1,15 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useHydrated, useRouterState } from "@tanstack/react-router";
 import { Fragment } from "react";
 
 export function Breadcrumbs() {
   const matches = useRouterState({ select: (s) => s.matches });
+  const hydrated = useHydrated();
 
-  const breadcrumbs = matches.flatMap(({ pathname, loaderData }) => {
+  const breadcrumbs = matches.flatMap(({ pathname, loaderData, ssr }) => {
+    // Client-only child loaders are absent from the server's initial trail.
+    if (!hydrated && ssr === false) return [];
     const title =
-      typeof loaderData === "object" && "title" in loaderData
+      loaderData && typeof loaderData === "object" && "title" in loaderData
         ? loaderData.title
         : undefined;
     return title ? [{ title, path: pathname }] : [];

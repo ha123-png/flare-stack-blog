@@ -17,27 +17,48 @@ export function dateLabel(value: Date | string | null | undefined) {
       }).format(new Date(value))
     : "";
 }
+export function TitleWords({ title }: { title: string }) {
+  return [
+    ...new Intl.Segmenter(getLocale(), { granularity: "word" }).segment(title),
+  ].map((part) =>
+    part.isWordLike ? (
+      <span className="sz-title-word" key={part.index}>
+        {part.segment}
+      </span>
+    ) : (
+      part.segment
+    ),
+  );
+}
 export function PageHeading({
   title,
   description,
-  count,
   children,
+  display = false,
+  eyebrow,
+  metadata,
+  className = "",
 }: {
   title: string;
   description?: string;
-  count?: number;
   children?: ReactNode;
+  display?: boolean;
+  eyebrow?: string;
+  metadata?: ReactNode;
+  className?: string;
 }) {
   return (
-    <header className="sz-page-heading">
-      <div>
-        <h1>
-          {title}
-          {count !== undefined && <sup>{count}</sup>}
-        </h1>
-        {description && <p>{description}</p>}
+    <header
+      className={`sz-page-heading${display ? " sz-page-heading--chapter" : ""} ${className}`}
+    >
+      <div className="sz-heading-copy">
+        {eyebrow && <p className="sz-label">{eyebrow}</p>}
+        <h1 className={display ? "sz-display-title" : undefined}>{title}</h1>
+        {description && <p className="sz-muted">{description}</p>}
       </div>
-      {children}
+      {(metadata || children) && (
+        <div className="sz-heading-meta">{metadata || children}</div>
+      )}
     </header>
   );
 }
@@ -60,19 +81,20 @@ export function EmptyState({
   );
 }
 export function Brand({ unfold = false }: { unfold?: boolean }) {
+  const site = useSite();
   return (
     <Link
       to="/"
       className="sz-brand"
       data-unfold={unfold || undefined}
-      aria-label={szwebSite.wordmark + uiText(" · 首页", " · Home")}
+      aria-label={site.title + uiText(" · 首页", " · Home")}
     >
       <span className="sz-brand-mark" aria-hidden="true">
         <i />
         <i />
         <i />
       </span>
-      <span className="sz-brand-name">{szwebSite.wordmark}</span>
+      <span className="sz-brand-name">{site.title}</span>
       <span className="sz-brand-domain">{szwebSite.domain}</span>
     </Link>
   );
@@ -83,7 +105,12 @@ export function TagLinks({ tags }: { tags?: Array<{ name: string }> }) {
       {tags
         ?.filter((tag) => isPublicTag(tag.name))
         .map((tag) => (
-          <Link key={tag.name} to="/posts" search={{ tagName: tag.name }}>
+          <Link
+            className="sz-topic-paper"
+            key={tag.name}
+            to="/posts"
+            search={{ tagName: tag.name }}
+          >
             {tag.name}
           </Link>
         ))}

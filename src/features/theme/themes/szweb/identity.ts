@@ -7,5 +7,7 @@ export const zheyeIdentity = {
 
 /** Upgrade only this site's legacy placeholder name, never a custom CMS title. */
 export function zheyePublicTitle(title: string): string {
-  return /^(szweb(?:\.ren)?)$/i.test(title.trim()) ? zheyeIdentity.name : title;
+  return /^(szweb(?:\.ren)?|名称|站点名称)?$/i.test(title.trim())
+    ? zheyeIdentity.name
+    : title;
 }

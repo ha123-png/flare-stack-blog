@@ -7,6 +7,8 @@ import type { Duration } from "@/lib/duration";
 import { serverEnv } from "@/lib/env/server.env";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { isPathValid } from "./path-manifest.generated";
+import { localeCacheRequest } from "./locale-cache";
+import { getLocale } from "@/paraglide/runtime";
 
 declare module "hono" {
   interface ContextVariableMap {
@@ -25,7 +27,7 @@ export const baseMiddleware = createMiddleware<{ Bindings: Env }>(
   },
 );
 
-const tryCacheResponse = (c: Context, cache: Cache) => {
+const tryCacheResponse = (c: Context, cache: Cache, cacheRequest: Request) => {
   let strategy:
     | typeof CACHE_CONTROL.notFound
     | typeof CACHE_CONTROL.serverError
@@ -60,11 +62,12 @@ const tryCacheResponse = (c: Context, cache: Cache) => {
 
   const responseToCache = c.res.clone();
   c.executionCtx.waitUntil(
-    cache.put(c.req.raw, responseToCache).catch(() => {}),
+    cache.put(cacheRequest, responseToCache).catch(() => {}),
   );
 };
 
 export const cacheMiddleware = createMiddleware(async (c, next) => {
+  if (c.env?.ENVIRONMENT === "dev") return next();
   if (c.req.method !== "GET") {
     return next();
   }
@@ -80,13 +83,25 @@ export const cacheMiddleware = createMiddleware(async (c, next) => {
 
   // 缓存响应逻辑
   const cache = (caches as unknown as { default: Cache }).default;
+  const cacheRequest = localeCacheRequest(c.req.raw, getLocale());
 
-  const cachedResponse = await cache.match(c.req.raw);
+  const cachedResponse = await cache.match(cacheRequest);
   if (cachedResponse) return cachedResponse;
 
   await next();
+  if (c.res.headers.get("Content-Type")?.includes("text/html")) {
+    c.res.headers.set("Content-Language", getLocale());
+    const vary = new Set(
+      (c.res.headers.get("Vary") ?? "")
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean),
+    );
+    vary.add("Cookie");
+    c.res.headers.set("Vary", [...vary].join(", "));
+  }
 
-  tryCacheResponse(c, cache);
+  tryCacheResponse(c, cache, cacheRequest);
 });
 
 const SHIELD_ALLOWED_PATHS = new Set([

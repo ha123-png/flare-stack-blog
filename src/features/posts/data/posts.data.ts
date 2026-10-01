@@ -17,6 +17,7 @@ import {
   buildPostWhereClause,
 } from "@/features/posts/data/helper";
 import type { PostListItem } from "@/features/posts/schema/posts.schema";
+import type { Project } from "@/features/config/projects.schema";
 import type { PostStatus, Tag } from "@/lib/db/schema";
 import { PostsTable, PostTagsTable, TagsTable } from "@/lib/db/schema";
 
@@ -107,6 +108,7 @@ export async function getPostsCursor(
     limit?: number;
     publicOnly?: boolean;
     tagName?: string;
+    project?: Pick<Project, "tagNames" | "leadSlug">;
     excludePinned?: boolean;
   } = {},
 ): Promise<{
@@ -118,6 +120,7 @@ export async function getPostsCursor(
     limit = DEFAULT_PAGE_SIZE,
     publicOnly,
     tagName,
+    project,
     excludePinned,
   } = options;
 
@@ -154,6 +157,23 @@ export async function getPostsCursor(
 
   if (tagName) {
     conditions.push(eq(TagsTable.name, tagName));
+  }
+
+  if (project) {
+    const tagged = project.tagNames.length
+      ? inArray(
+          PostsTable.id,
+          db
+            .select({ postId: PostTagsTable.postId })
+            .from(PostTagsTable)
+            .innerJoin(TagsTable, eq(PostTagsTable.tagId, TagsTable.id))
+            .where(inArray(TagsTable.name, project.tagNames)),
+        )
+      : undefined;
+    const lead = project.leadSlug
+      ? eq(PostsTable.slug, project.leadSlug)
+      : undefined;
+    conditions.push(or(tagged, lead) ?? sql`0 = 1`);
   }
 
   if (excludePinned) {
