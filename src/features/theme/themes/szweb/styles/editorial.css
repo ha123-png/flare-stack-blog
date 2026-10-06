@@ -429,11 +429,11 @@
   font-size: var(--sz-ui);
 }
 .sz-mobile-menu > nav > a {
-  font-size: 36px;
-  line-height: 1.95;
+  font-size: 22px;
+  line-height: 1.3;
 }
-.sz-mobile-menu > nav > a > span {
-  font-size: var(--sz-meta);
+.sz-mobile-menu > nav > a > small {
+  font-size: var(--sz-micro);
 }
 /* Account and community pages use the same reading/UI roles. */
 .sz-account-eyebrow,

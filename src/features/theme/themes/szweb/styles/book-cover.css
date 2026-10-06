@@ -245,49 +245,91 @@ p.sz-cover-identity {
 .sz-cover-imprint {
   letter-spacing: 0.12em;
 }
-.sz-cover-featured {
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr) auto;
+.sz-home-latest {
+  --sz-paper-fold: 28px;
+  display: block;
+  padding-block: 34px 32px;
+  border-bottom: 1px solid var(--sz-line);
+}
+.sz-home-latest:is(:hover, :focus-visible) .sz-text-link svg {
+  transform: translateX(4px);
+}
+.sz-home-latest-label {
+  display: inline-flex;
   align-items: center;
-  gap: 32px;
-  padding-block: 30px 34px;
+  gap: 12px;
+  margin-bottom: 17px;
+  color: var(--sz-fg);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
 }
-.sz-cover-featured .sz-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  align-items: flex-start;
-  font-size: 11px;
+.sz-home-latest-label::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: currentColor;
 }
-.sz-cover-featured .sz-kicker {
-  font-size: 11px;
-}
-.sz-cover-featured h2 {
-  font-size: clamp(20px, 1.9vw, 27px);
+.sz-home-latest h3 {
+  max-width: 26em;
+  font-size: clamp(30px, 3vw, 42px);
   font-weight: 400;
   letter-spacing: -0.025em;
-  line-height: 1.45;
+  line-height: 1.4;
   margin: 0;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
 }
-.sz-cover-featured-summary {
-  max-width: 62em;
-  margin: 9px 0 0;
-  font-size: 12px;
+.sz-home-latest-summary {
+  max-width: 52em;
+  margin: 14px 0 0;
+  font-size: 15px;
   color: var(--sz-muted);
-  line-height: 1.8;
+  line-height: 1.9;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 3;
   overflow: hidden;
 }
-.sz-cover-featured-read {
+.sz-home-latest-footer {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-top: 25px;
 }
-.sz-cover-featured-read > span {
-  font-size: 11px;
+.sz-home-latest-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--sz-muted);
+  font-variant-numeric: tabular-nums;
+}
+.sz-home-latest-footer > .sz-text-link {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.sz-home-latest-footer svg {
+  transition: transform 260ms var(--sz-ease);
+}
+.sz-reading-aside {
+  padding-top: 35px;
+}
+.sz-reading-group {
+  min-width: 0;
+}
+.sz-reading-group + .sz-reading-group {
+  margin-top: 30px;
+}
+.sz-reading-group h2 {
+  margin-bottom: 0;
+  color: var(--sz-fg);
+  line-height: 1.6;
 }
 .sz-book-cover--about {
   padding-top: 0;
@@ -411,7 +453,7 @@ p.sz-cover-identity {
 }
 /* Latin headlines use the same display face in both language choices. */
 .sz-post-title,
-.sz-cover-featured h2,
+.sz-home-latest h3,
 .sz-home-row h3,
 .sz-article-title,
 .sz-aside-entry h3,
@@ -478,10 +520,6 @@ p.sz-cover-identity {
     font-size: 13px;
     max-width: 25em;
   }
-  .sz-cover-featured {
-    grid-template-columns: 115px minmax(0, 1fr) auto;
-    gap: 22px;
-  }
 }
 @media (max-width: 850px) {
   .sz-cover-body {
@@ -510,9 +548,6 @@ p.sz-cover-identity {
     padding-inline: 12px;
     gap: 12px;
     font-size: 12px;
-  }
-  .sz-cover-featured-summary {
-    -webkit-line-clamp: 2;
   }
   .sz-book-cover--about .sz-cover-body {
     min-height: 320px;
@@ -607,29 +642,38 @@ p.sz-cover-identity {
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
-  .sz-cover-featured {
-    grid-template-columns: 1fr auto;
-    gap: 15px 22px;
-    padding-block: 24px 28px;
+  .sz-home-latest {
+    padding-block: 24px;
   }
-  .sz-cover-featured .sz-meta {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    gap: 20px;
+  .sz-home-latest-label {
+    font-size: 13px;
+    margin-bottom: 14px;
   }
-  .sz-cover-featured h2 {
-    font-size: 20px;
+  .sz-home-latest h3 {
+    font-size: clamp(27px, 7.1vw, 32px);
   }
-  .sz-cover-featured-summary {
-    margin-top: 7px;
+  .sz-home-latest-summary {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .sz-home-latest-footer {
+    margin-top: 20px;
+    gap: 12px;
+  }
+  .sz-home-latest-meta {
     font-size: 11px;
+    gap: 6px 12px;
   }
-  .sz-cover-featured-read > span {
-    display: none;
-  }
-  .sz-cover-featured-read .sz-text-link {
-    font-size: 11px;
+  .sz-home-latest-footer > .sz-text-link {
+    font-size: 13px;
     gap: 6px;
+  }
+  .sz-reading-aside {
+    padding-top: 25px;
+  }
+  .sz-reading-group + .sz-reading-group {
+    margin-top: 0;
   }
   .sz-book-cover--about {
     padding-top: 0;

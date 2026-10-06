@@ -336,64 +336,79 @@ body:has(.sz-site) {
 }
 .sz-mobile-menu {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100dvh;
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  border: 0;
-  padding: 24px;
-  color: #eee;
-  background: #050505;
-  --sz-bg: #050505;
-  --sz-fg: #eee;
-  --sz-muted: #999;
-  --sz-line: #333;
-  --sz-soft: #191919;
+  inset: 12px 0 auto;
+  width: calc(100% - 24px);
+  height: auto;
+  max-width: 480px;
+  max-height: calc(100dvh - 24px);
+  margin: 0 auto;
+  border: 1px solid var(--sz-line);
+  padding: 18px 20px;
+  color: var(--sz-fg);
+  background: var(--sz-bg);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.18);
   overflow: auto;
+  overscroll-behavior: contain;
 }
 .sz-mobile-menu::backdrop {
-  background: #050505;
+  background: rgb(0 0 0 / 0.24);
 }
 .sz-menu-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.sz-menu-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
 }
 .sz-menu-search {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-block: 1px solid #333;
-  min-height: 60px;
-  color: #aaa !important;
+  gap: 12px;
+  border-block: 1px solid var(--sz-line);
+  min-height: 48px;
+  color: var(--sz-muted) !important;
   font-size: 12px;
 }
 .sz-mobile-menu > nav {
   display: grid;
-  padding: 25px 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 20px;
+  padding: 16px 0;
 }
 .sz-mobile-menu > nav > a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 31px;
-  line-height: 2.05;
-  letter-spacing: -1px;
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-height: 64px;
+  padding-block: 8px;
+  border-bottom: 1px solid var(--sz-line);
+  letter-spacing: 0;
 }
-.sz-mobile-menu > nav > a > span {
+.sz-mobile-menu > nav > a > small {
   font-size: 11px;
   letter-spacing: 0;
-  color: #888;
+  color: var(--sz-muted);
+}
+.sz-mobile-menu > nav > a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset: auto auto -1px 0;
+  width: 24px;
+  height: 2px;
+  background: var(--sz-fg);
 }
 .sz-menu-account {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 22px;
-  padding-top: 14px;
-  border-top: 1px solid #333;
+  padding-top: 2px;
   font-size: 12px;
 }
 .sz-menu-account > * {
@@ -406,26 +421,19 @@ body:has(.sz-site) {
   padding: 0;
   border: 0;
   width: 100%;
-  color: #999;
+  color: var(--sz-muted);
 }
 .sz-menu-bottom {
   display: flex;
   gap: 25px;
   align-items: center;
-  margin-top: 28px;
+  margin-top: 4px;
   font-size: 12px;
 }
 .sz-menu-bottom > a {
   min-height: 44px;
   display: flex;
   align-items: center;
-}
-.sz-menu-bottom .sz-appearance {
-  margin-left: auto;
-}
-.sz-menu-bottom .sz-popover {
-  top: auto;
-  bottom: 100%;
 }
 .sz-footer {
   background: #050505;
@@ -1493,6 +1501,9 @@ body:has(.sz-site) {
   }
   .sz-mobile-menu {
     padding: 20px;
+  }
+  .sz-mobile-menu .sz-brand-domain {
+    display: none;
   }
   .sz-home-intro {
     gap: 10px;

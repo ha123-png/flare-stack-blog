@@ -128,14 +128,15 @@
 .sz-mobile-menu[open] > nav > a:nth-child(6) {
   animation-delay: 100ms;
 }
-.sz-mobile-menu > nav > a[aria-current="page"] > span {
-  color: #eee;
+.sz-mobile-menu > nav > a[aria-current="page"] > small {
+  color: var(--sz-fg);
 }
-.sz-mobile-menu > nav > a > span {
+.sz-mobile-menu > nav > a > small {
   transition: transform 220ms var(--sz-ease);
 }
-.sz-mobile-menu > nav > a:hover > span {
-  transform: translateX(-4px);
+.sz-mobile-menu > nav > a:is(:hover, :focus-visible) > small {
+  color: var(--sz-fg);
+  transform: translateX(3px);
 }
 
 /* A persistent canvas lets the eye follow content instead of a changing box. */

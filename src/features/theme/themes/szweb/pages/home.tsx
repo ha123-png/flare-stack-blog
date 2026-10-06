@@ -65,20 +65,16 @@ export function HomePage({
   pinnedPosts = [],
   popularPosts = [],
 }: HomePageProps) {
-  const featured = pinnedPosts[0] ?? posts[0];
-  const recent = posts.filter((post) => post.id !== featured?.id).slice(0, 5);
-  const secondaryPinned = pinnedPosts
-    .slice(1)
-    .filter((post) => !recent.some((item) => item.id === post.id));
-  const aside = [
-    ...secondaryPinned,
-    ...popularPosts.filter(
-      (post) =>
-        post.id !== featured?.id &&
-        !recent.some((item) => item.id === post.id) &&
-        !secondaryPinned.some((pin) => pin.id === post.id),
-    ),
-  ];
+  // The public feed is ordered by publication date; pinning never selects the lead.
+  const latest = posts[0];
+  const recent = posts.slice(1, 6);
+  const recommendations = pinnedPosts.filter((post) => post.id !== latest?.id);
+  const mostRead = popularPosts.filter(
+    (post) =>
+      post.id !== latest?.id &&
+      !recommendations.some((pin) => pin.id === post.id),
+  );
+  const { projects } = useSite();
   const { data: tags = [] } = useQuery(tagsQueryOptions);
   const { counts: views } = useBatchedViewCounts(
     [...posts, ...pinnedPosts].map((post) => post.slug),
@@ -87,110 +83,95 @@ export function HomePage({
     <>
       <div className="sz-wrap">
         <BookCover />
-        {featured ? (
-          <section className="sz-cover-featured">
-            <div className="sz-meta">
-              <span className="sz-kicker">
-                {featured.pinnedAt
-                  ? uiText("精选文章", "Featured")
-                  : uiText("最新文章", "Latest article")}
-              </span>
-              <time
-                dateTime={
-                  featured.publishedAt
-                    ? new Date(featured.publishedAt).toISOString()
-                    : undefined
-                }
-              >
-                {dateLabel(featured.publishedAt)}
-              </time>
-            </div>
-            <div>
-              <h2>
-                <Link to="/post/$slug" params={{ slug: featured.slug }}>
-                  {featured.title}
-                </Link>
-              </h2>
-              {featured.summary && (
-                <p className="sz-cover-featured-summary">{featured.summary}</p>
-              )}
-            </div>
-            <div className="sz-cover-featured-read">
-              <Link
-                className="sz-text-link sz-text-link--line"
-                to="/post/$slug"
-                params={{ slug: featured.slug }}
-              >
-                {uiText("阅读全文", "Read the article")}
-                <ArrowRight size={16} />
-              </Link>
-              <span className="sz-muted">
-                {featured.readTimeInMinutes} {uiText("分钟阅读", " min read")}
-              </span>
-            </div>
-          </section>
-        ) : (
-          <EmptyState
-            title={uiText(
-              "第一篇，正在路上。",
-              "The first story is on its way.",
-            )}
-            description={uiText(
-              "新的记录会从这里开始。",
-              "New stories will begin here.",
-            )}
-          />
-        )}
       </div>
-      <section className="sz-wrap sz-home-writing">
+      <section
+        className="sz-wrap sz-home-writing"
+        aria-labelledby="sz-writing-heading"
+      >
+        <div className="sz-section-heading">
+          <h2 id="sz-writing-heading">
+            {uiText("最近写下", "Recent writing")}
+          </h2>
+          <Link to="/posts" className="sz-text-link">
+            {uiText("全部文章", "All articles")}
+            <Plus size={15} />
+          </Link>
+        </div>
         <div className="sz-home-writing-grid">
           <div>
-            <div className="sz-section-heading">
-              <h2>{uiText("最近写下", "Recent writing")}</h2>
-              <Link to="/posts" className="sz-text-link">
-                {uiText("全部文章", "All articles")}
-                <Plus size={15} />
-              </Link>
-            </div>
-            {recent.length ? (
-              recent.map((post) => (
-                <WritingRow
-                  key={post.id}
-                  post={post}
-                  views={views?.[post.slug]}
-                />
-              ))
-            ) : (
-              <p className="sz-muted">
-                {uiText(
-                  "新的文章会陆续出现在这里。",
-                  "New articles will appear here.",
+            {latest ? (
+              <Link
+                className="sz-home-latest sz-paper-row"
+                to="/post/$slug"
+                params={{ slug: latest.slug }}
+                aria-labelledby="sz-latest-label sz-latest-title"
+                data-chroma={articleChroma(latest.slug, latest.tags)}
+                data-paper-accent={articlePaperAccent(latest, projects)}
+                data-article={latest.slug}
+              >
+                <span className="sz-home-latest-label" id="sz-latest-label">
+                  {uiText("最新文章", "Latest article")}
+                </span>
+                <h3 id="sz-latest-title">{latest.title}</h3>
+                {latest.summary && (
+                  <p className="sz-home-latest-summary">{latest.summary}</p>
                 )}
-              </p>
+                <div className="sz-home-latest-footer">
+                  <div className="sz-home-latest-meta">
+                    <time
+                      dateTime={
+                        latest.publishedAt
+                          ? new Date(latest.publishedAt).toISOString()
+                          : undefined
+                      }
+                    >
+                      {dateLabel(latest.publishedAt)}
+                    </time>
+                    <span>
+                      {latest.readTimeInMinutes}{" "}
+                      {uiText("分钟阅读", " min read")}
+                    </span>
+                  </div>
+                  <span className="sz-text-link sz-text-link--line">
+                    {uiText("阅读全文", "Read the article")}
+                    <ArrowRight size={16} />
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <EmptyState
+                title={uiText(
+                  "第一篇，正在路上。",
+                  "The first story is on its way.",
+                )}
+                description={uiText(
+                  "新的记录会从这里开始。",
+                  "New stories will begin here.",
+                )}
+              />
             )}
+            {recent.map((post) => (
+              <WritingRow
+                key={post.id}
+                post={post}
+                views={views?.[post.slug]}
+              />
+            ))}
           </div>
           <aside className="sz-reading-aside">
-            {aside.length > 0 && (
-              <h2 className="sz-label">
-                {uiText("值得重读", "Worth another read")}
-              </h2>
-            )}
-            {aside.map((post) => (
-              <Link
-                key={post.id}
-                to="/post/$slug"
-                params={{ slug: post.slug }}
-                className="sz-aside-entry"
-              >
-                <h3>{post.title}</h3>
-                <span>
-                  {post.pinnedAt
-                    ? uiText("置顶", "Pinned")
-                    : uiText("近 30 天热门", "Popular this month")}{" "}
-                  · {post.readTimeInMinutes} {uiText("分钟", " min")}
-                </span>
-              </Link>
-            ))}
+            <ReadingGroup
+              id="sz-pinned-heading"
+              title={uiText("置顶推荐", "Pinned articles")}
+              posts={recommendations}
+            />
+            <ReadingGroup
+              id="sz-most-read-heading"
+              title={uiText(
+                "近 30 天阅读较多",
+                "Most read in the last 30 days",
+              )}
+              posts={mostRead}
+            />
             <div className="sz-home-explore">
               <h2 className="sz-label">
                 {uiText("从一个主题开始", "Start with a topic")}
@@ -220,6 +201,37 @@ export function HomePage({
       </section>
       <ProjectStage />
     </>
+  );
+}
+function ReadingGroup({
+  id,
+  title,
+  posts,
+}: {
+  id: string;
+  title: string;
+  posts: PostItem[];
+}) {
+  if (!posts.length) return null;
+  return (
+    <section className="sz-reading-group" aria-labelledby={id}>
+      <h2 className="sz-label" id={id}>
+        {title}
+      </h2>
+      {posts.map((post) => (
+        <Link
+          key={post.id}
+          to="/post/$slug"
+          params={{ slug: post.slug }}
+          className="sz-aside-entry"
+        >
+          <h3>{post.title}</h3>
+          <span>
+            {post.readTimeInMinutes} {uiText("分钟阅读", " min read")}
+          </span>
+        </Link>
+      ))}
+    </section>
   );
 }
 export function HomePageSkeleton() {

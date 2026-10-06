@@ -217,18 +217,33 @@ function Header({
           setMenuOpen(false);
           toggle.current?.focus();
         }}
+        onClick={(event) => {
+          if (event.target !== event.currentTarget) return;
+          const bounds = event.currentTarget.getBoundingClientRect();
+          if (
+            event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom
+          ) {
+            close();
+          }
+        }}
         aria-label={uiText("主导航", "Main navigation")}
       >
         <div className="sz-menu-top">
           <Brand />
-          <button
-            type="button"
-            className="sz-icon-button"
-            aria-label={uiText("关闭导航菜单", "Close navigation")}
-            onClick={close}
-          >
-            <X size={22} />
-          </button>
+          <div className="sz-menu-controls">
+            <Appearance />
+            <button
+              type="button"
+              className="sz-icon-button"
+              aria-label={uiText("关闭导航菜单", "Close navigation")}
+              onClick={close}
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
         <Link to="/search" className="sz-menu-search" onClick={close}>
           {uiText(
@@ -247,8 +262,8 @@ function Header({
                 foldChapter(location.pathname) === link.to ? "page" : undefined
               }
             >
-              {en ? link.en : link.title}
-              <span>{link.en}</span>
+              <span>{en ? link.en : link.title}</span>
+              <small>{en ? link.title : link.en}</small>
             </Link>
           ))}
         </nav>
@@ -261,7 +276,6 @@ function Header({
             {uiText("友链", "Friends")}
           </Link>
           <a href="/rss.xml">RSS</a>
-          <Appearance />
         </div>
       </dialog>
     </>

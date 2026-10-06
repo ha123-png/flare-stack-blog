@@ -1,7 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { popularPostsQuery } from "@/features/posts/queries";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import type { PostsPageProps } from "@/features/theme/contract/pages";
 import {
@@ -70,7 +68,6 @@ function saveListState(key: string, state: SavedListState) {
 function PostRow({
   post,
   pinned,
-  popular,
   views,
   viewsPending,
   compact,
@@ -81,7 +78,6 @@ function PostRow({
 }: {
   post: PostItem;
   pinned: boolean;
-  popular: boolean;
   views?: number;
   viewsPending: boolean;
   compact: boolean;
@@ -118,13 +114,12 @@ function PostRow({
               {post.title}
             </Link>
           </h2>
-          {(pinned || popular) && (
+          {pinned && (
             <span
               className="sz-article-flags"
               aria-label={text("文章标记", "Article labels")}
             >
-              {pinned && <span>{text("置顶", "Pinned")}</span>}
-              {popular && <span>{text("热门", "Popular")}</span>}
+              <span>{text("置顶", "Pinned")}</span>
             </span>
           )}
         </div>
@@ -222,11 +217,6 @@ export function PostsPage({
   const postSlugs = useMemo(() => posts.map((post) => post.slug), [posts]);
   const { counts: viewCounts, isPending: viewsPending } =
     useBatchedViewCounts(postSlugs);
-  const { data: popularPosts } = useQuery(popularPostsQuery(10));
-  const popularSlugs = useMemo(
-    () => new Set((popularPosts ?? []).map((post) => post.slug)),
-    [popularPosts],
-  );
 
   useEffect(() => {
     const saved = readSavedState(storageKey);
@@ -434,7 +424,6 @@ export function PostsPage({
                 key={post.id}
                 post={post}
                 pinned={Boolean(post.pinnedAt)}
-                popular={popularSlugs.has(post.slug)}
                 views={viewCounts[post.slug]}
                 viewsPending={viewsPending}
                 compact={compact}
