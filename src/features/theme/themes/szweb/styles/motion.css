@@ -108,7 +108,13 @@
   animation: sz-small-arrival 180ms var(--sz-ease);
 }
 .sz-mobile-menu[open] {
-  animation: sz-menu-arrival 160ms ease-out;
+  animation: sz-menu-arrival 280ms var(--sz-ease);
+}
+.sz-mobile-menu[open]::backdrop {
+  animation: sz-menu-backdrop-arrival 240ms ease-out;
+}
+.sz-mobile-menu[data-closing="true"]::backdrop {
+  animation: sz-menu-backdrop-dismiss 180ms ease-in both;
 }
 .sz-mobile-menu[open] > nav > a {
   animation: sz-small-arrival 280ms var(--sz-ease) both;
@@ -291,10 +297,25 @@
 }
 @keyframes sz-menu-arrival {
   from {
-    opacity: 0.6;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.99);
   }
   to {
     opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sz-menu-backdrop-arrival {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sz-menu-backdrop-dismiss {
+  to {
+    opacity: 0;
   }
 }
 @media (min-width: 651px) and (max-width: 850px) {
@@ -328,6 +349,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .sz-mobile-menu,
+  .sz-mobile-menu::backdrop {
+    animation: none !important;
+  }
   .sz-project-slide {
     transform: none;
   }
@@ -337,7 +362,7 @@
 }
 
 /* Only the content sheet turns. Header, footer and reading controls stay put. */
-@media (min-width: 851px) and (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) {
   .sz-main {
     view-transition-name: sz-page;
   }
@@ -371,6 +396,33 @@
     pointer-events: none;
   }
 }
+@media (max-width: 850px) and (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(sz-page) {
+    animation-duration: 340ms;
+  }
+  ::view-transition-old(sz-page) {
+    animation: sz-mobile-page-close 160ms ease-out both;
+  }
+  ::view-transition-new(sz-page) {
+    animation: sz-mobile-page-open 340ms cubic-bezier(0.22, 0.68, 0, 1) both;
+  }
+}
+@keyframes sz-mobile-page-close {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes sz-mobile-page-open {
+  from {
+    opacity: 0.25;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes sz-page-close {
   to {
     opacity: 0;
@@ -391,6 +443,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  html:has(.sz-site)::view-transition-old(root),
+  html:has(.sz-site)::view-transition-new(root),
   ::view-transition-group(sz-page),
   ::view-transition-old(sz-page),
   ::view-transition-new(sz-page) {

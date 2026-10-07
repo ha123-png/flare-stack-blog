@@ -16,19 +16,17 @@ export function useEditorialMotion(pathname: string) {
               { opacity: 0.65, clipPath: "inset(0 1.5% 0 0)" },
               { opacity: 1, clipPath: "inset(0 0 0 0)" },
             ]
-          : [{ opacity: 0.65 }, { opacity: 1 }],
+          : [{ opacity: 0.35 }, { opacity: 1 }],
         { duration, easing: "cubic-bezier(0.22, 0.68, 0, 1)" },
       );
       animations.add(animation);
       animation.onfinish = () => animations.delete(animation);
     };
     // Transforming the route root would temporarily re-anchor fixed reading UI.
-    // Native snapshots handle desktop turns. The fallback never moves fixed UI.
-    const nativeTurn =
-      typeof document.startViewTransition === "function" &&
-      window.matchMedia("(min-width: 851px)").matches;
+    // Native snapshots handle page turns at every width without moving fixed UI.
+    const nativeTurn = typeof document.startViewTransition === "function";
     const frame = requestAnimationFrame(() => {
-      if (!nativeTurn) play(root, false, 200);
+      if (!nativeTurn) play(root, false, 320);
     });
     const observer = new IntersectionObserver(
       (entries) => {

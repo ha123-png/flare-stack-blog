@@ -68,6 +68,7 @@ export function HomePage({
   // The public feed is ordered by publication date; pinning never selects the lead.
   const latest = posts[0];
   const recent = posts.slice(1, 6);
+  const primaryPostIds = new Set(posts.slice(0, 6).map((post) => post.id));
   const recommendations = pinnedPosts.filter((post) => post.id !== latest?.id);
   const mostRead = popularPosts.filter(
     (post) =>
@@ -163,6 +164,7 @@ export function HomePage({
               id="sz-pinned-heading"
               title={uiText("置顶推荐", "Pinned articles")}
               posts={recommendations}
+              primaryPostIds={primaryPostIds}
             />
             <ReadingGroup
               id="sz-most-read-heading"
@@ -171,6 +173,7 @@ export function HomePage({
                 "Most read in the last 30 days",
               )}
               posts={mostRead}
+              primaryPostIds={primaryPostIds}
             />
             <div className="sz-home-explore">
               <h2 className="sz-label">
@@ -207,14 +210,20 @@ function ReadingGroup({
   id,
   title,
   posts,
+  primaryPostIds,
 }: {
   id: string;
   title: string;
   posts: PostItem[];
+  primaryPostIds: Set<number>;
 }) {
   if (!posts.length) return null;
   return (
-    <section className="sz-reading-group" aria-labelledby={id}>
+    <section
+      className="sz-reading-group"
+      aria-labelledby={id}
+      data-mobile-empty={posts.every((post) => primaryPostIds.has(post.id))}
+    >
       <h2 className="sz-label" id={id}>
         {title}
       </h2>
@@ -224,6 +233,7 @@ function ReadingGroup({
           to="/post/$slug"
           params={{ slug: post.slug }}
           className="sz-aside-entry"
+          data-in-reading-list={primaryPostIds.has(post.id)}
         >
           <h3>{post.title}</h3>
           <span>

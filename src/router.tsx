@@ -42,9 +42,7 @@ export function getRouter() {
       !/^\/(admin|login|register|forgot-password|reset-link|verify-email|profile|submit-friend-link|oauth)(\/|$)/.test(
         path,
       );
-    const motion = window.matchMedia(
-      "(min-width: 851px) and (prefers-reduced-motion: no-preference)",
-    );
+    const motion = window.matchMedia("(prefers-reduced-motion: no-preference)");
     let previousPathname = window.location.pathname;
     const updateMotion = () =>
       router.update({

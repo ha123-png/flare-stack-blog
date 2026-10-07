@@ -670,32 +670,98 @@ p.sz-cover-identity {
     gap: 6px;
   }
   .sz-reading-aside {
-    padding-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 28px;
+    padding-top: 24px;
+  }
+  .sz-reading-group[data-mobile-empty="true"] {
+    display: none;
+  }
+  .sz-reading-group .sz-aside-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 8px 20px;
+    padding-block: 16px;
+  }
+  .sz-reading-group .sz-aside-entry[data-in-reading-list="true"] {
+    display: none;
+  }
+  .sz-reading-group .sz-aside-entry h3 {
+    margin: 0;
+  }
+  .sz-reading-group .sz-aside-entry > span {
+    padding-top: 3px;
+    white-space: nowrap;
   }
   .sz-reading-group + .sz-reading-group {
+    margin-top: 0;
+  }
+  .sz-reading-aside .sz-home-explore {
     margin-top: 0;
   }
   .sz-book-cover--about {
     padding-top: 0;
   }
   .sz-book-cover--about .sz-cover-body {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
     min-height: 0;
-    padding-top: 25px;
+    gap: 16px 12px;
+    padding-block: 24px 22px;
   }
-  .sz-cover-title--name .sz-cover-opening {
-    font-size: 30px;
-    margin-bottom: 9px;
+  .sz-book-cover--about .sz-cover-copy {
+    display: contents;
   }
-  .sz-cover-title--name .sz-cover-brush {
-    font-size: clamp(88px, 23vw, 125px);
+  .sz-book-cover--about .sz-cover-title--name {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+  }
+  .sz-book-cover--about .sz-cover-title--name .sz-cover-opening {
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: 0;
+    margin-bottom: 12px;
+  }
+  .sz-book-cover--about .sz-cover-title--name .sz-cover-brush {
+    font-size: clamp(58px, 16vw, 76px);
   }
   .sz-book-cover--about .sz-cover-object {
-    width: 72%;
-    margin-top: 2px;
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-width: 220px;
+    justify-self: end;
+    margin: 0;
   }
-  .sz-cover-description--statement {
-    font-size: 18px;
+  .sz-book-cover--about .sz-cover-object-note {
+    font-size: 12px;
+    gap: 8px;
+    padding-inline: 0;
+    margin-top: -9px;
+  }
+  .sz-book-cover--about .sz-cover-object-note svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+  .sz-book-cover--about .sz-cover-description--statement {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: clamp(18px, 4.8vw, 21px);
+    line-height: 1.75;
+    max-width: none;
+    margin: 0;
+  }
+  .sz-book-cover--about .sz-cover-identity {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    max-width: none;
+    margin: -7px 0 0;
+    font-size: 12px;
+    line-height: 1.85;
   }
   .sz-page-heading h1.sz-display-title {
     font-size: 64px;

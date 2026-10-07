@@ -90,12 +90,49 @@ function Header({
   const navigationRef = useNavigationIndicator(location.pathname);
   const dialog = useRef<HTMLDialogElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const closingAnimation = useRef<Animation | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const en = getLocale() === "en";
   const close = () => {
-    dialog.current?.close();
-    setMenuOpen(false);
+    const panel = dialog.current;
+    if (!panel?.open || closingAnimation.current) return;
+    const finish = () => {
+      delete panel.dataset.closing;
+      panel.close();
+      setMenuOpen(false);
+    };
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      typeof panel.animate !== "function"
+    ) {
+      finish();
+      return;
+    }
+    panel.dataset.closing = "true";
+    const animation = panel.animate(
+      [
+        { opacity: 1, transform: "translateY(0) scale(1)" },
+        { opacity: 0, transform: "translateY(-8px) scale(0.99)" },
+      ],
+      { duration: 180, easing: "ease-in", fill: "both" },
+    );
+    closingAnimation.current = animation;
+    const complete = () => {
+      if (closingAnimation.current !== animation) return;
+      closingAnimation.current = null;
+      finish();
+      animation.cancel();
+    };
+    void animation.finished.then(complete, complete);
   };
+  useEffect(
+    () => () => {
+      const animation = closingAnimation.current;
+      closingAnimation.current = null;
+      animation?.cancel();
+    },
+    [],
+  );
   useEffect(() => {
     close();
     document
@@ -214,8 +251,16 @@ function Header({
         id="sz-mobile-menu"
         ref={dialog}
         onClose={() => {
+          const animation = closingAnimation.current;
+          closingAnimation.current = null;
+          animation?.cancel();
+          if (dialog.current) delete dialog.current.dataset.closing;
           setMenuOpen(false);
           toggle.current?.focus();
+        }}
+        onCancel={(event) => {
+          event.preventDefault();
+          close();
         }}
         onClick={(event) => {
           if (event.target !== event.currentTarget) return;
